@@ -27,6 +27,9 @@ module Seq = struct
            | [], _    -> None
            | ls, seq' -> Some (ls, seq'))
 
+  let drop_n : type a. int -> a Seq.t -> a Seq.t =
+    fun n seq -> take_n n seq |> snd
+
   let slide_n : type a. int -> a Seq.t -> a list Seq.t =
    fun n seq ->
     if n < 1 then raise (Invalid_argument "slide_n with n =< 0");
