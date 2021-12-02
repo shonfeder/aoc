@@ -1,2 +1,2 @@
 (library
- (name aoc2021))
+ (name lib))
