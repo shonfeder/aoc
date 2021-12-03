@@ -1,4 +1,4 @@
-(lang dune 3.0)
+(lang dune 2.8)
 
 (name aoc2021)
 
@@ -21,7 +21,7 @@
  (name aoc2021)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune bitstring)
+ (depends ocaml dune)
  (tags
   (topics "to describe" your project)))
 

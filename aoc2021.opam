@@ -11,8 +11,7 @@ doc: "https://url/to/documentation"
 bug-reports: "https://github.com/username/reponame/issues"
 depends: [
   "ocaml"
-  "dune" {>= "3.0"}
-  "bitstring"
+  "dune" {>= "2.8"}
   "odoc" {with-doc}
 ]
 build: [
