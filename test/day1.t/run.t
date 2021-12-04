@@ -1,6 +1,6 @@
 https://adventofcode.com/2021/day/2
 
-  $ export AOC_DAY=day1
+  $ export AOC_DAY=1
 
 Part 1: count the number of times a depth measurement increases
 

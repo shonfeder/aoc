@@ -1,6 +1,6 @@
 https://adventofcode.com/2021/day/2
 
-  $ export AOC_DAY=day2
+  $ export AOC_DAY=2
 
 Part 1:
 
