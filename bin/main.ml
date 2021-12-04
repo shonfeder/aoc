@@ -121,7 +121,7 @@ module Day3 = struct
   module Life = struct
     type nums =
       { count : int
-      ; vals : int Array.t Seq.t
+      ; vals : int Array.t List.t
       }
 
     type st =
@@ -132,68 +132,60 @@ module Day3 = struct
 
     let init column =
       { column
-      ; zeros = { count = 0; vals = Seq.empty }
-      ; ones = { count = 0; vals = Seq.empty }
+      ; zeros = { count = 0; vals = [] }
+      ; ones = { count = 0; vals = [] }
       }
 
     let add_line : st -> int Array.t -> st =
      fun st ln ->
-     Printf.printf "-> %d\n" ln.(st.column);
       match ln.(st.column) with
       | 0 ->
           { st with
             zeros =
-              { count = succ st.zeros.count; vals = Seq.cons ln st.zeros.vals }
+              { count = succ st.zeros.count; vals = ln :: st.zeros.vals }
           }
       | 1 ->
           { st with
             ones =
-              { count = succ st.ones.count; vals = Seq.cons ln st.ones.vals }
+              { count = succ st.ones.count; vals = ln :: st.ones.vals }
           }
       | _ -> failwith "invalid bit"
 
     let next_col st = init (succ st.column)
 
+    (* YUCK :( *)
     let solve (lines : int Array.t Seq.t) =
-      let process st lines =
-        Printf.printf ">c: %d\n" st.column;
-        Seq.to_list lines |> List.length |> Printf.printf ">list1: %d\n";
-        let st = Seq.fold_left (fun st _ -> st ) st lines in
-        Seq.to_list lines |> List.length |> Printf.printf ">list2: %d\n";
-        Printf.printf ">z: %d\n" st.zeros.count;
-        Printf.printf ">o: %d\n" st.ones.count;
-        st
+      let process st lines = List.fold_left add_line st lines in
+      let rec oxygen st lines =
+        let st' = process st lines in
+        let next = next_col st' in
+        match (st'.ones.count, st'.zeros.count) with
+        | 1, 1 -> st'.ones.vals |> List.hd
+        | 0, 1 -> st'.zeros.vals |> List.hd
+        | 1, 0 -> st'.ones.vals |> List.hd
+        | o, z when o > z -> oxygen next st'.ones.vals
+        | o, z when z > o -> oxygen next st'.zeros.vals
+        | o, z when o = z -> oxygen next st'.ones.vals
+        | _ -> failwith ""
       in
-      (* let rec oxygen st lines =
-       *   let st' = process st lines in
-       *   let next = next_col st' in
-       *   match st'.ones.count, st'.zeros.count with
-       *   | 1, 1 -> st'.ones.vals |> Seq.hd |> Option.get
-       *   | 0, 1 -> st'.zeros.vals |> Seq.hd |> Option.get
-       *   | 1, 0 -> st'.ones.vals |> Seq.hd |> Option.get
-       *   | o, z when o > z -> oxygen next st'.ones.vals
-       *   | o, z when z > o -> oxygen next st'.zeros.vals
-       *   | o, z when o = z -> oxygen next st'.ones.vals
-       *   | _ -> failwith ""
-       * in *)
       let rec scrubber st lines =
         let st' = process st lines in
         let next = next_col st' in
         match st'.ones.count, st'.zeros.count with
-        | 1, 1 -> st'.zeros.vals |> Seq.hd |> Option.get
-        | 0, 1 -> st'.zeros.vals |> Seq.hd |> Option.get
-        | 1, 0 -> st'.ones.vals |> Seq.hd |> Option.get
-        | 0, 0 -> failwith "no nums"
+        | 1, 1 -> st'.zeros.vals |> List.hd
+        | 0, 1 -> st'.zeros.vals |> List.hd
+        | 1, 0 -> st'.ones.vals |> List.hd
         | o, z when o < z -> scrubber next st'.ones.vals
         | o, z when z < o -> scrubber next st'.zeros.vals
         | o, z when o = z -> scrubber next st'.zeros.vals
+        | 0, 0 -> failwith "no nums"
         | _ -> failwith ""
       in
+      let nums = List.of_seq lines in
       let st = init 0 in
-      (* let ox = oxygen st lines |> Array.to_list |> bin_digits_to_int in *)
-      print_endline "scrubbing";
-      let sc = scrubber st lines |> Array.to_list |> bin_digits_to_int in
-       sc
+      let ox = oxygen st nums |> Array.to_list |> bin_digits_to_int in
+      let sc = scrubber st nums |> Array.to_list |> bin_digits_to_int in
+      ox * sc
   end
 
   let solve params =
@@ -225,9 +217,3 @@ let () =
         exit 1
   in
   solver Sys.argv
-
-(* let () =
- *   let lines = List.to_seq [[|1|]] in
- *   Seq.to_list lines |> List.length |> Printf.printf ">list1: %d\n";
- *   let st = Seq.fold_left (fun s _ -> s) (Day3.Life.init 0) lines in
- *   Seq.to_list lines |> List.length |> Printf.printf ">list2: %d\n"; *)

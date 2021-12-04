@@ -14,3 +14,7 @@ Part 1:
 Part 2:
 
   $ aoc2021 life < test
+  230
+
+  $ aoc2021 life < input
+  230
