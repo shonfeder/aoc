@@ -165,6 +165,7 @@ module Day3 = struct
         | 1, 0 -> st'.ones.vals |> List.hd
         | o, z when o > z -> oxygen next st'.ones.vals
         | o, z when z > o -> oxygen next st'.zeros.vals
+        | 0, 0 -> failwith "no nums"
         | o, z when o = z -> oxygen next st'.ones.vals
         | _ -> failwith ""
       in
@@ -177,8 +178,8 @@ module Day3 = struct
         | 1, 0 -> st'.ones.vals |> List.hd
         | o, z when o < z -> scrubber next st'.ones.vals
         | o, z when z < o -> scrubber next st'.zeros.vals
-        | o, z when o = z -> scrubber next st'.zeros.vals
         | 0, 0 -> failwith "no nums"
+        | o, z when o = z -> scrubber next st'.zeros.vals
         | _ -> failwith ""
       in
       let nums = List.of_seq lines in

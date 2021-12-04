@@ -68,6 +68,14 @@ module Seq = struct
     xs
 
   let partition f s = (Seq.filter f s, Seq.filter (Fun.negate f) s)
+
+  (** Duplicate every element *)
+  let duplicate : 'a Seq.t -> ('a * 'a) Seq.t =
+   fun seq ->
+    seq
+    |> Seq.unfold (fun s ->
+           let+ x, xs = uncons s in
+           ((x, x), xs))
 end
 
 module List = struct
