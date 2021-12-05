@@ -27,7 +27,7 @@ let update_state_part_2 s (dir, n) =
   | "down"    -> { s with aim = s.aim + n }
   | _         -> failwith ("Invalid direction " ^ dir)
 
-let solve params =
+let solve params lines =
   let parse_line ln =
     match String.split_on_char ' ' ln with
     | [ dir; n ] -> (dir, int_of_string n)
@@ -39,7 +39,7 @@ let solve params =
     | "part2" -> update_state_part_2
     | _       -> failwith "invalid part"
   in
-  lines_of_in_channel stdin
+  lines
   |> Seq.map parse_line
   |> Seq.fold_left update_f empty_state
   |> fun { horizontal; depth; _ } -> horizontal * depth

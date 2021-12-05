@@ -5,8 +5,39 @@ let lines_of_in_channel ic =
   in
   Seq.unfold read_line ()
 
+module Option = struct
+  include Option
+
+  module Let = struct
+    let ( let* ) = bind
+
+    let ( let+ ) x f = map f x
+  end
+
+  let some_if b thunk =
+    if b then
+      Some (thunk ())
+    else
+      None
+end
+
 module Seq = struct
   include Seq
+
+  let uncons s =
+    match s () with
+    | Seq.Nil          -> None
+    | Seq.Cons (x, xs) -> Some (x, xs)
+
+  open Option.Let
+
+  let hd s =
+    let+ x, _ = uncons s in
+    x
+
+  let tl s =
+    let+ _, xs = uncons s in
+    xs
 
   let take_n n seq =
     let rec aux count seq acc =
@@ -50,22 +81,34 @@ module Seq = struct
 
   let to_list = List.of_seq
 
-  let uncons s =
-    match s () with
-    | Seq.Nil          -> None
-    | Seq.Cons (x, xs) -> Some (x, xs)
+  let take_while : ('a -> bool) -> 'a Seq.t -> 'a list * 'a Seq.t =
+   fun f seq ->
+    let rec loop acc seq =
+      match uncons seq with
+      | None         -> (List.rev acc, seq)
+      | Some (x, xs) ->
+          if f x then
+            loop (x :: acc) xs
+          else
+            (List.rev acc, cons x seq)
+    in
+    loop [] seq
 
-  let ( let* ) = Option.bind
+  let drop_while : ('a -> bool) -> 'a Seq.t -> 'a Seq.t =
+   fun f seq -> take_while f seq |> snd
 
-  let ( let+ ) x f = Option.map f x
-
-  let hd s =
-    let+ x, _ = uncons s in
-    x
-
-  let tl s =
-    let+ _, xs = uncons s in
-    xs
+  let split_on : ('a -> bool) -> 'a Seq.t -> 'a list Seq.t =
+    (* takes xs for which `f x` is true, and drops empty sequences for which it is not *)
+    let rec taker f seq =
+      let taken, rest = take_while (Fun.negate f) seq in
+      let rest = drop_while f rest in
+      match taken with
+      | _ :: _ -> Some (taken, rest)
+      | []     ->
+          let* x, xs = uncons rest in
+          taker f (cons x xs)
+    in
+    fun f seq -> seq |> Seq.unfold (fun seq -> taker f seq)
 end
 
 module List = struct

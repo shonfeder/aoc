@@ -119,14 +119,14 @@ module Life = struct
     ox * sc
 end
 
-let solve params =
+let solve params lines =
   let decoder =
     params.(1) |> function
     | "power" -> Power.solve
     | "life"  -> Life.solve
     | _       -> failwith "Invalid command"
   in
-  lines_of_in_channel stdin
+  lines
   |> Seq.map (fun line ->
       String.to_seq line
       |> Array.of_seq

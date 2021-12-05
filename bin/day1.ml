@@ -1,15 +1,12 @@
 open Lib
 
-let solve params =
+let solve params lines =
   let window_size = params.(1) |> int_of_string in
   match
-    (lines_of_in_channel stdin
-    |> Seq.map int_of_string
-    |> Seq.slide_n window_size)
-      ()
+    lines |> Seq.map int_of_string |> Seq.slide_n window_size |> Seq.uncons
   with
-  | Seq.Nil                -> failwith "no input"
-  | Seq.Cons (first, rest) ->
+  | None               -> failwith "no input"
+  | Some (first, rest) ->
       Seq.fold_left
         (fun (prev, count) window ->
           if List.length window < window_size then

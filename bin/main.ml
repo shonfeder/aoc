@@ -1,5 +1,5 @@
 module type Solver = sig
-  val solve : string Array.t -> int
+  val solve : string Array.t -> string Seq.t -> int
 end
 
 let solvers : (module Solver) Array.t =
@@ -16,4 +16,8 @@ let () =
   | (exception Failure _) ->
       print_endline ("Invalid AOC_DAY day: " ^ day);
       exit 1
-  | (module Solver) -> Sys.argv |> Solver.solve |> Printf.printf "%d"
+  | (module Solver) ->
+      stdin
+      |> Lib.lines_of_in_channel
+      |> Solver.solve Sys.argv
+      |> Printf.printf "%d"
