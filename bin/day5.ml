@@ -81,18 +81,6 @@ module D : Domain = struct
 
   type map = int VentMap.t
 
-  (* let as_array m =
-   *   let max_x, max_y =
-   *     VentMap.fold
-   *       (fun (x, y) _ (max_x, max_y) -> (max x max_x, max y max_y))
-   *       m
-   *       (0, 0)
-   *   in
-   *   let arr = Array.make_matrix max_x max_y 0 in
-   *   VentMap.iter (fun (x, y) v -> arr.(y).(x) <- v) m *)
-
-  (* TODO print map using as_array *)
-
   let add_point map point =
     VentMap.update
       point
