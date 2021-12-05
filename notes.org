@@ -1,0 +1,101 @@
+#+TITLE: Notes
+
+Notes aiming to provide reflection and insight on the process, so I can improve
+my methodology.
+
+* Times/day summaries
+
+#+BEGIN: clocktable :scope file :maxlevel 2
+#+CAPTION: Clock summary at [2021-12-05 Sun 12:13]
+| Headline     | Time   |
+|--------------+--------|
+| *Total time* | *1:53* |
+|--------------+--------|
+| Day 5        | 1:53   |
+#+END:
+
+
+* Process
+
+An evolving checklist of "best practices" emerging as I work through the
+problems.
+
+1. Add [[Template][new entry]] for notes for the day and clock in
+2. Set up test harness in  [[./test]]
+   - Copy test input into =./test/dayN.t/test=
+   - Copy puzzle input into =./test/dayN.t/input=
+   - Set up integration tests in =./test/dayN.t/run.t=
+3. Set up solution scaffolding:
+   - Add module =DayN.ml= to [[./bin]]
+   - Add skeleton to module:
+       #+begin_src ocaml
+       open Containers
+
+       module type Domain = sig
+         (* TODO Specification of domain *)
+       end
+
+       module Solver (D : Domain) = struct
+         let solve : string Array.t -> string Seq.t -> int =
+           fun params lines ->
+           (* TODO Solution to puzzle *)
+             (??)
+       end
+
+       module D : Domain = struct
+         (* TODO Implementation of domain *)
+       end
+
+       (* Instantiate the solver *)
+       include Solver (D)
+       #+end_src
+     - Register the module in the [[./bin/main.ml::5][solvers]]
+4. Extract semi-formal specification from puzzle description (as bullet points)
+5. Specify the =Domain= interface
+6. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
+7. Implement =Domain= in =D=
+
+* Tracking and Reflection
+** Days 1 to 5
+
+Was not taking notes or recording times.
+
+Main takeaways:
+
+- Specify problem at type level *before* implementing.
+
+** DONE Day 5
+:LOGBOOK:
+CLOCK: [2021-12-05 Sun 12:00]--[2021-12-05 Sun 12:13] =>  0:13
+CLOCK: [2021-12-05 Sun 09:28]--[2021-12-05 Sun 09:49] =>  0:21
+CLOCK: [2021-12-05 Sun 08:04]--[2021-12-05 Sun 09:23] =>  1:19
+:END:
+
+*** Implementation
+**** Errors
+- Was initializing map locations incorrectly initially, setting them to 0 at the
+  first marked point, rather to 1.
+- Misread the specification: it called for returning the *number of points with
+  2 or more overlapping vents*, but I was returning *the sum of all spaces with
+  2 or more overlapping vents*.
+
+Both of these errors are results of not carefully attending to *specific value
+ranges* detailed by the specification.
+**** To improve
+
+- Bullet-point specification in english before writing formalizing specification
+  in types.
+
+** TODO Day 6
+
+*** Specification
+*** Implementation
+
+
+* Template
+** Day N
+*** Improvement to practice
+*** Specification
+*** Implementation
+**** Errors
+**** To improve
