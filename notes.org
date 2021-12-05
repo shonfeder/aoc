@@ -62,7 +62,20 @@ Was not taking notes or recording times.
 
 Main takeaways:
 
-- Specify problem at type level *before* implementing.
+- Avoid refactoring foo: some refactoring to reuse parts can be help accelerate,
+  but it's also an easy place to procrastinate and avoid actually tackling the
+  problems.
+- Specify problems at type level *before* implementing. Helps prevent losing
+  focus, since you can focus just on the high level representation, then get the
+  type checker to give an interactive "checklist" of values you need to
+  implement.
+- If the aim is time-efficient implementations, don't rely on OCaml's till
+  impoverished stdlib. I ended up having to implement too many basic utility
+  functions. From Day 5 on, I'm helping myself to [[https://github.com/c-cube/ocaml-containers][Containers]].
+- Bullet-point out the key details of the specification before starting to code
+  up anything. Most of the mistakes that have slowed me down have come from
+  making minor mistakes at the value-level during specification.
+
 
 ** DONE Day 5
 :LOGBOOK:
@@ -72,6 +85,9 @@ CLOCK: [2021-12-05 Sun 08:04]--[2021-12-05 Sun 09:23] =>  1:19
 :END:
 
 *** Implementation
+
+[[./bin/day5.ml][Solution]]
+
 **** Errors
 - Was initializing map locations incorrectly initially, setting them to 0 at the
   first marked point, rather to 1.
@@ -97,5 +113,7 @@ ranges* detailed by the specification.
 *** Improvement to practice
 *** Specification
 *** Implementation
+[[./bin/dayN.ml][Solution]]
+
 **** Errors
 **** To improve
