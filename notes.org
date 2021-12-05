@@ -20,7 +20,7 @@ my methodology.
 An evolving checklist of "best practices" emerging as I work through the
 problems.
 
-1. Add [[Template][new entry]] for notes for the day and clock in
+1. Add [[* Template][new entry]] for notes for the day and clock in
 2. Set up test harness in  [[./test]]
    - Copy test input into =./test/dayN.t/test=
    - Copy puzzle input into =./test/dayN.t/input=
