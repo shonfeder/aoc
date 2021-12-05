@@ -3,7 +3,12 @@ module type Solver = sig
 end
 
 let solvers : (module Solver) Array.t =
-  [| (module Day1); (module Day2); (module Day3); (module Day4) |]
+  [| (module Day1)
+   ; (module Day2)
+   ; (module Day3)
+   ; (module Day4)
+   ; (module Day5)
+  |]
 
 let () =
   match Sys.getenv "AOC_DAY" with
