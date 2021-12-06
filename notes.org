@@ -6,12 +6,14 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-05 Sun 12:13]
-| Headline     | Time   |
-|--------------+--------|
-| *Total time* | *1:53* |
-|--------------+--------|
-| Day 5        | 1:53   |
+#+CAPTION: Clock summary at [2021-12-06 Mon 03:44]
+| Headline                | Time   |      |
+|-------------------------+--------+------|
+| *Total time*            | *3:02* |      |
+|-------------------------+--------+------|
+| Tracking and Reflection | 3:02   |      |
+| \_  Day 5               |        | 1:53 |
+| \_  Day 6               |        | 1:09 |
 #+END:
 
 
@@ -102,18 +104,74 @@ ranges* detailed by the specification.
 - Bullet-point specification in english before writing formalizing specification
   in types.
 
-** TODO Day 6
+** STRT Day 6
+:LOGBOOK:
+CLOCK: [2021-12-06 Mon 02:26]--[2021-12-06 Mon 03:35] =>  1:09
+:END:
 
 *** Specification
+
+- Given :: A list of numbers representing ages of lanternfish
+- Produce :: The number of fish expected at 80 days
+- Domain ::
+  - Each mature lanternfish creates a new fish after 7 days
+  - Newly born lanternfish take +2 days to mature
+
+- Representation ::
+  - Represent each lantern fish as a single number, which acts as a counter
+  - Represent a day passing as an iteration that reduces all counters
+  - 1 new counter is created when any counter decreases from 0
+  - A new counter start at 8 (2 days to mature + 7 days to produce)
+  - After a counter reaches 0, it resets to 6
+
 *** Implementation
+[[./bin/day6.ml][Solution]]
+
+- We only have 9 counter states to track: 0 to 8.
+- To compute the number of new counters spawned, we need only track how many of
+  each counter are in each state.
+- So we can represent the state space as an =int Array.t= of length 9, where the
+  =j_th= int represents the number of counters in that state.
+- Proof that this alternative representation is equivalent to the one
+  specified is given by the pair of functions
+
+    - =array_to_counters : int Array.t -> int list=
+    - =counters_to_array : int list -> int Array.t=
+
+  defining an isomorphic mapping between the compressed representation and the
+  list of counters.
+
+*** Reflection
+
+Today went very smoothly. Whether it was because today's puzzle was easier, or
+admitted an elegant solution more easily than previous days, whether I just got
+lucky striking on the right representation, or whether my process improvements
+may be helping, I feel that it was pretty nearly ideal.
+
+**** Errors
+Two small errors in counter increment logic.
+
+- I placed the updates adding the new counters and the reset counters in the
+  same loop used to shift the counters to the left.
+- I had an off by one error, setting the expired counters to index 5 instead of
+  6.
+
+**** To improve
+- Write implementation ideas in plaint text first.
+- *Keep the domain abstract*. This gives much more flexibility in improving the
+  representation, which you'll likely want to do, since working the problem will
+  bring more insight into the structures you can draw upon.
+- [[https://www.youtube.com/playlist?list=PLqgbyDNJ3NvVBYzC5CJ_9sjcnx2pueo4h]["first thought, best thought"]] is usually not the case, so give the initial
+  representation and strategy a second thought.
+- Writing out update algorithm in bullet points prior to coding may have helped
+  avoid the two errors I encountered.
 
 
 * Template
 ** Day N
-*** Improvement to practice
 *** Specification
 *** Implementation
 [[./bin/dayN.ml][Solution]]
-
+*** Reflection
 **** Errors
 **** To improve
