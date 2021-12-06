@@ -148,6 +148,9 @@ admitted an elegant solution more easily than previous days, whether I just got
 lucky striking on the right representation, or whether my process improvements
 may be helping, I feel that it was pretty nearly ideal.
 
+I also used an imperative solution today. I wonder if this could have
+contributed to the cleaner process in this (particular) case?
+
 **** Errors
 Two small errors in counter increment logic.
 
