@@ -1,7 +1,6 @@
 open Containers
 
 module type Domain = sig
-  (* TODO Specification of domain *)
   type t
 
   val of_string : string -> t
@@ -45,20 +44,11 @@ module D : Domain = struct
 
   let count_fish st = Array.fold_left ( + ) 0 st
 
-  (* let show st =
-   *   Printf.printf "Total fish %d" (count_fish st);
-   *   print_string "Counters: ";
-   *   Array.iter (Printf.printf "%d ") st;
-   *   print_newline () *)
-
   let tick st =
     let expired_counters = st.(0) in
-    for n = 1 to Array.length st - 1 do
-      st.(n - 1) <- st.(n);
-    done;
+    Array.iteri (fun i counter -> if i <> 0 then st.(i - 1) <- counter) st;
     st.(8) <- expired_counters;
     st.(6) <- st.(6) + expired_counters
 end
 
-(* Instantiate the solver *)
 include Solver (D)
