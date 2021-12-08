@@ -6,14 +6,15 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-06 Mon 03:44]
+#+CAPTION: Clock summary at [2021-12-07 Tue 22:48]
 | Headline                | Time   |      |
 |-------------------------+--------+------|
-| *Total time*            | *3:02* |      |
+| *Total time*            | *5:33* |      |
 |-------------------------+--------+------|
-| Tracking and Reflection | 3:02   |      |
+| Tracking and Reflection | 5:33   |      |
 | \_  Day 5               |        | 1:53 |
 | \_  Day 6               |        | 1:09 |
+| \_  Day 7               |        | 2:31 |
 #+END:
 
 
@@ -53,9 +54,10 @@ problems.
        #+end_src
      - Register the module in the [[./bin/main.ml::5][solvers]]
 4. Extract semi-formal specification from puzzle description (as bullet points)
-5. Specify the =Domain= interface
-6. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
-7. Implement =Domain= in =D=
+5. Write implementation plan as bullet points
+6. Specify the =Domain= interface
+7. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
+8. Implement =Domain= in =D=
 
 * Tracking and Reflection
 ** Days 1 to 5
@@ -104,7 +106,7 @@ ranges* detailed by the specification.
 - Bullet-point specification in english before writing formalizing specification
   in types.
 
-** STRT Day 6
+** DONE Day 6
 :LOGBOOK:
 CLOCK: [2021-12-06 Mon 02:26]--[2021-12-06 Mon 03:35] =>  1:09
 :END:
@@ -160,14 +162,82 @@ Two small errors in counter increment logic.
   6.
 
 **** To improve
-- Write implementation ideas in plaint text first.
+- Write implementation plan in bullet points first.
 - *Keep the domain abstract*. This gives much more flexibility in improving the
   representation, which you'll likely want to do, since working the problem will
   bring more insight into the structures you can draw upon.
 - [[https://www.youtube.com/playlist?list=PLqgbyDNJ3NvVBYzC5CJ_9sjcnx2pueo4h]["first thought, best thought"]] is usually not the case, so give the initial
   representation and strategy a second thought.
-- Writing out update algorithm in bullet points prior to coding may have helped
+- Writing out algorithm in bullet points prior to coding may have helped
   avoid the two errors I encountered.
+** STRT Day 7
+:LOGBOOK:
+CLOCK: [2021-12-07 Tue 22:00]--[2021-12-07 Tue 22:48] =>  0:48
+CLOCK: [2021-12-07 Tue 21:01]--[2021-12-07 Tue 21:32] =>  0:31
+CLOCK: [2021-12-07 Tue 20:38]--[2021-12-07 Tue 20:39] =>  0:01
+CLOCK: [2021-12-07 Tue 19:45]--[2021-12-07 Tue 20:35] =>  0:50
+CLOCK: [2021-12-07 Tue 07:56]--[2021-12-07 Tue 08:17] =>  0:21
+:END:
+*** Specification
+- input: horizontal positions of crab submarines
+- aim: get all horizontal positions to match while minimizing fuel expenditure
+- output: integer representing the least amount of fuel needed to make all
+  horizontal positions equal
+
+- crab submarines
+- each crab has a horizontal position
+- each crab has limited fuel
+- moving horizontal position by 1 unit costs 1 unit of fuel
+
+*** Implementation
+
+- Some preliminary research indicates that a truly elegant structure might be
+  found by looking at [[https://en.wikipedia.org/wiki/Graph_bandwidth][graph bandwidth]] problems. But I think the overhead for me
+  getting conversant with the prerequisites to encode that effectively will be
+  too costly.
+
+- Similar to the compression for day 6, we can group each "crab" by sets of
+  values. So we can use a hashmap of =int -> int=, where the key is the
+  position of the crab and the value is the number of grabs at that position.
+  Then we can calculate the fuel cost to =x= for all crabs as =|x - position| *
+  num_crabs=.
+- To find the alignment position requiring minimum adjustment, we can do a
+  binary search starting with the min and max positions in the set.
+  - There is probably an optimization to be found here by taking into account
+    how many crabs are at each position, but I won't bother with this unless I
+    hit a bottlneck.
+
+Plan:
+
+- Parse in crab positions
+- Get min and max positions
+- Create hashmap: =position -> num_crabs=
+- Get mean of positions
+- Find cost of mean position
+- Get cost of mean +/- 1
+  - If +1 is lower than mean, then search ascending
+  - If -1 is lower than mean, then search descending
+- Stop search when next post is more costly than prev
+
+[[./bin/day7.ml][Solution]]
+*** Reflection
+
+I wasn't able to block out contiguous time to focus to today, so that made
+things a bit slower and more muddled.
+
+I also didn't hit a really elegant solution comparable to yesterday. I think
+such a solution would have been available if I knew more math facts, but I just
+didn't have the mechanisms at hand. Part 2 still completes in 0.004 seconds, so
+it's relatively performant, but it's the code itself feels a bit ad hoc.
+
+Still, my process overall is working pretty well.
+
+**** Errors
+- Confused the placement of arguments in initial search for min value
+- Forgot to handle zero case in my triangle number function
+**** To improve
+
+...
 
 
 * Template

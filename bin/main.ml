@@ -9,6 +9,7 @@ let solvers : (module Solver) Array.t =
    ; (module Day4)
    ; (module Day5)
    ; (module Day6)
+   ; (module Day7)
   |]
 
 let () =
@@ -26,4 +27,4 @@ let () =
       stdin
       |> Lib.lines_of_in_channel
       |> Solver.solve Sys.argv
-      |> Printf.printf "%d"
+      |> Printf.printf "%d\n"
