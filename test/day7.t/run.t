@@ -15,5 +15,5 @@ Part 2:
   $ aoc2021 variable < test
   168
 
-  $ time aoc2021 variable < input
+  $ aoc2021 variable < input
   96708205

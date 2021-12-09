@@ -6,15 +6,16 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-07 Tue 22:48]
+#+CAPTION: Clock summary at [2021-12-08 Wed 21:41]
 | Headline                | Time   |      |
 |-------------------------+--------+------|
-| *Total time*            | *5:33* |      |
+| *Total time*            | *8:03* |      |
 |-------------------------+--------+------|
-| Tracking and Reflection | 5:33   |      |
+| Tracking and Reflection | 8:03   |      |
 | \_  Day 5               |        | 1:53 |
 | \_  Day 6               |        | 1:09 |
 | \_  Day 7               |        | 2:31 |
+| \_  Day 8               |        | 2:30 |
 #+END:
 
 
@@ -170,7 +171,7 @@ Two small errors in counter increment logic.
   representation and strategy a second thought.
 - Writing out algorithm in bullet points prior to coding may have helped
   avoid the two errors I encountered.
-** STRT Day 7
+** DONE Day 7
 :LOGBOOK:
 CLOCK: [2021-12-07 Tue 22:00]--[2021-12-07 Tue 22:48] =>  0:48
 CLOCK: [2021-12-07 Tue 21:01]--[2021-12-07 Tue 21:32] =>  0:31
@@ -236,9 +237,105 @@ Still, my process overall is working pretty well.
 - Confused the placement of arguments in initial search for min value
 - Forgot to handle zero case in my triangle number function
 **** To improve
-
 ...
 
+** STRT Day 8
+:LOGBOOK:
+CLOCK: [2021-12-08 Wed 20:56]--[2021-12-08 Wed 21:33] =>  0:37
+CLOCK: [2021-12-08 Wed 19:26]--[2021-12-08 Wed 20:21] =>  0:55
+CLOCK: [2021-12-08 Wed 19:20]--[2021-12-08 Wed 19:23] =>  0:03
+CLOCK: [2021-12-08 Wed 17:37]--[2021-12-08 Wed 17:54] =>  0:17
+CLOCK: [2021-12-08 Wed 08:11]--[2021-12-08 Wed 08:13] =>  0:02
+CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
+:END:
+*** Specification
+
+- Input: Lines of entries correlating signal patterns to output values
+
+- Signal patterns and output values in an entry are separated by `|`
+- Each entry has 10 unique signal patterns, representing how the 10 digits of a
+  clock are signaled.
+- Each entry has a four digit output value
+- ...
+
+**** Part 1:
+- Output: Count of the number of times 1, 4, 7, or 8 appear in output values
+
+- These 4 digits have a unique number of segments:
+  - 1 :: 2
+  - 4 :: 4
+  - 7 :: 3
+  - 8 :: 7
+- So we can identify them in the outputs simply by counting encoded digits that
+  have the respective number of segments.
+
+**** Part 2:
+
+- Output: The sum of all output values
+
+- Using the uniquely identifiable digits as reference, we can decode the
+  segments triggered by each signal.
+- Use the decoding algorithm to decode all outputs
+- Then return their sum
+
+*** Implementation
+[[./bin/day8.ml][Solution]]
+
+**** Part 1
+
+- Parse each line into representation that groups the signal patterns and the
+  output values (for now, we can just work on a sequence of such representation,
+  because we only need to traverse once.)
+- Fold over the seq, counting the number of "digits" (strings) in the output
+  values that have segments in the specified unique values.
+
+**** Part 2
+
+- Each digit is uniquely represented as a set of characters (which represent
+  the signals)
+- Determine the encoding of the signal on each entry using the following chart:
+
+  | Digit | Segments | Id By                   |
+  |-------+----------+-------------------------|
+  |     1 | #2       | uniq #2                 |
+  |     7 | #3       | uniq #3                 |
+  |     4 | #4       | uniq #4                 |
+  |     2 | #5       | remaining #5            |
+  |     5 | #5       | intersection of 9 and 6 |
+  |     3 | #5       | #5 where 1 is subset    |
+  |     0 | #6       | #6 where 7 is subset    |
+  |     6 | #6       | remaining #6            |
+  |     9 | #6       | #6 where 4 is subset    |
+  |     8 | #7       | uniq #7                 |
+
+- Represent the encoding as a map from sets to ints
+- Lookup the digital value of each char set in the outputs
+- Construct the int based on the digits
+- Fold over of the decoded ints to sum them
+
+*** Reflection
+
+- Completed part 1 in ~30 mins with no errors. But it was very simple.
+- Part 2 took me an additional 2 hours. Some complication from unrelated
+  emotional distress, and some from having to fight some unhelpful negative
+  thought patterns.
+    - Namely, when some problems take a lot of time, or I get confused while
+      working through something, I have a tendency to start judging,
+      belittling, and being impatient with myself. Thinking such toxic thoughts
+      as: you are too stupid to do this kind of work, you are too slow, you
+      can't think clearly, why don't you have enough energy/stamina etc.
+    - It took me some moments to catch this bad pattern taking shape, and to
+      remind myself that to be patient and kind to myself. These kinds of things
+      can be hard. And, in any case, I am only trying to learn, to improve, and
+      to have fun!
+
+**** Errors
+No errors! I'm quite surprised, but my solutions to both parts worked correctly
+on the test input first try, and no errors were made when translating my
+specs and plans into implementation.
+**** To improve
+I neglected to exercise today or yesterday (aside from a short walk). I suspect
+this is taking a toll. So, I must make time for this tomorrow.
 
 * Template
 ** Day N

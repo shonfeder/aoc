@@ -10,6 +10,7 @@ let solvers : (module Solver) Array.t =
    ; (module Day5)
    ; (module Day6)
    ; (module Day7)
+   ; (module Day8)
   |]
 
 let () =

@@ -112,9 +112,19 @@ module Seq = struct
 end
 
 module List = struct
-  include List
+  include Containers.List
 
   let sum ls = List.fold_left ( + ) 0 ls
+
+  let remove_map f assoc =
+    let rec aux ls acc =
+    match ls with
+    | [] -> (None, List.rev acc)
+    | x :: rest -> match f x with
+      | None -> aux rest (x :: acc)
+      | Some a -> (Some a, List.rev acc @ rest)
+    in
+    aux assoc []
 end
 
 let bin_digits_to_int : int list -> int =
