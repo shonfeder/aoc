@@ -16,3 +16,4 @@ Part 2
   61229
 
   $ aoc2021 totals < input
+  1046281
