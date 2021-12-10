@@ -12,14 +12,14 @@ module type Domain = sig
 end
 
 module Solver (D : Domain) = struct
-  let solve : string Array.t -> string Seq.t -> int =
+  let solve : string Array.t -> string Zlist.t -> int =
    fun params lines ->
     let days =
       params.(1)
       |> Int.of_string
       |> Option.get_exn_or "Invalid days: expected int"
     in
-    let st = Seq.head_exn lines |> D.of_string in
+    let st = Zlist.head lines |> Option.get_exn_or "empty file" |> D.of_string in
     let () =
       for _ = 1 to days do
         D.tick st

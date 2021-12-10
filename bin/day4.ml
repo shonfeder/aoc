@@ -23,7 +23,7 @@ module type Impl = sig
 
   val draw_number : t -> (t * int) option
 
-  val parse : string Seq.t -> t option
+  val parse : string Zlist.t -> t option
 end
 
 module Solver (M : Impl) = struct
@@ -190,10 +190,11 @@ module Impl : Impl = struct
 
   let parse lines =
     let open Option.Let in
-    let* nums, rest = Seq.uncons lines in
+    let* nums, rest = Zlist.uncons lines in
     let numbers = String.split_on_char ',' nums |> List.map int_of_string in
     let boards =
-      Seq.split_on (String.equal "") rest
+      Zlist.to_seq rest
+      |> Seq.split_on (String.equal "")
       |> Seq.map Array.of_list
       |> Seq.map
            (Array.map (fun line ->

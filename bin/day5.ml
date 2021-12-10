@@ -27,7 +27,7 @@ module type Domain = sig
 
   val count_overlapping_vents : map -> int
 
-  val parse : string Seq.t -> Vent.t Seq.t
+  val parse : string Zlist.t -> Vent.t Zlist.t
 end
 
 module Solver (M : Domain) = struct
@@ -39,7 +39,7 @@ module Solver (M : Domain) = struct
       | Some _ -> failwith "Invalid argument: only accept 'diagonal'"
     in
     let vents = M.parse lines in
-    let map = Seq.fold_left (M.add_vent_line ~diagonal) M.VentMap.empty vents in
+    let map = Zlist.fold_left (M.add_vent_line ~diagonal) M.VentMap.empty vents in
     M.count_overlapping_vents map
 end
 
@@ -100,7 +100,7 @@ module D : Domain = struct
     |> List.map snd
     |> List.fold_left (fun acc x -> if x > 1 then succ acc else acc ) 0
 
-  let parse lines = lines |> Seq.map Vent.of_string
+  let parse lines = lines |> Zlist.map Vent.of_string
 end
 
 include Solver (D)

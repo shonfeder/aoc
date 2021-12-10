@@ -25,35 +25,43 @@ An evolving checklist of "best practices" emerging as I work through the
 problems.
 
 1. Add [[* Template][new entry]] for notes for the day and clock in
-2. Set up test harness in  [[./test]]
-   - Copy test input into =./test/dayN.t/test=
-   - Copy puzzle input into =./test/dayN.t/input=
-   - Set up integration tests in =./test/dayN.t/run.t=
-3. Set up solution scaffolding:
+2. Set up solution scaffolding:
    - Add module =DayN.ml= to [[./bin]]
    - Add skeleton to module:
        #+begin_src ocaml
-       open Containers
+open Containers
 
-       module type Domain = sig
-         (* TODO Specification of domain *)
-       end
+module type Domain = sig
+(* TODO Specification of domain *)
+end
 
-       module Solver (D : Domain) = struct
-         let solve : string Array.t -> string Seq.t -> int =
-           fun params lines ->
-           (* TODO Solution to puzzle *)
-             (??)
-       end
+module Solver (D : Domain) = struct
+let solve : string Array.t -> string Seq.t -> int =
+    fun _params _lines ->
+    failwith "TODO Solution to puzzle"
+end
 
-       module D : Domain = struct
-         (* TODO Implementation of domain *)
-       end
+module D : Domain = struct
+(* TODO Implementation of domain *)
+end
 
-       (* Instantiate the solver *)
-       include Solver (D)
+(* Instantiate the solver *)
+include Solver (D)
        #+end_src
      - Register the module in the [[./bin/main.ml::5][solvers]]
+3. Set up test harness in  [[./test]]
+   - Copy test input into =./test/dayN.t/test=
+   - Copy puzzle input into =./test/dayN.t/input=
+   - Set up integration tests in =./test/dayN.t/run.t=
+     #+begin_src
+https://adventofcode.com/2021/day/<N>
+
+  $ export AOC_DAY=<N>
+
+Part 1:
+
+  $ aoc2021 < test
+     #+end_src
 4. Extract semi-formal specification from puzzle description (as bullet points)
 5. Write implementation plan as bullet points
 6. Specify the =Domain= interface
@@ -336,6 +344,48 @@ specs and plans into implementation.
 **** To improve
 I neglected to exercise today or yesterday (aside from a short walk). I suspect
 this is taking a toll. So, I must make time for this tomorrow.
+
+** STRT Day 9
+:LOGBOOK:
+CLOCK: [2021-12-09 Thu 10:05]--[2021-12-09 Thu 11:06] =>  1:01
+CLOCK: [2021-12-09 Thu 09:58]--[2021-12-09 Thu 09:59] =>  0:01
+CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
+:END:
+*** Specification
+- Input: a 2-d matrix of single digit numbers, representing heights of each position
+- Output: The sum of the *risk levels* of the *low points*
+
+- low point :: locations with a lower value than all adjacent positions
+- adjacent positions :: Positions in the matrix are only considered to have straight (not diagonal) adjacency, so max 4 adjacent points to each position.
+- risk level :: 1 plus the height
+*** Implementation
+[[./bin/day9.ml][Solution]]
+
+- read input into 2-d matrix of ints
+- identify low points
+  - for each position in the matrix, measure whether it is < all adjacent
+    positions
+  - adjacent positions given by +/1 each of x and y indices (use safe get values
+    to detect edges and corners).
+- calculate risk
+  - position + 1
+- sum calculated risk in accumulator constructed while scanning the matrix
+
+*** Reflection
+**** Errors
+- First run of part 1 produced 0.
+  Due to the way that the implementation of `Seq.to_array` is defined in
+  containers. It first iterates through the whole sequence to get the length,
+  and this breaks the functionality with Seq!
+  https://github.com/c-cube/ocaml-containers/blob/74954f53a0e5cb87ab6ce7affac23dd2ba2812eb/src/core/CCSeq.ml#L397
+
+- This is the second time very surprising behavior with Seq has caused huge time
+  blocks.
+**** To improve
+- Implement (lazy so memoized?) streaming from file?
+  - Later... Before even completing part 2 I've ported everything to a properly lazy
+    (i.e., memoized) stream based interface, which should protect me from these
+    kinds of mistakes in the future!
 
 * Template
 ** Day N

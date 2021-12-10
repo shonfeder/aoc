@@ -1,4 +1,5 @@
 open Containers
+module Zlist = Lib.Zlist
 
 module type Domain = sig
   (* Crab positions *)
@@ -17,7 +18,7 @@ module type Domain = sig
 end
 
 module Solver (D : Domain) = struct
-  let solve : string Array.t -> string Seq.t -> int =
+  let solve : string Array.t -> string Zlist.t -> int =
    fun params lines ->
     let fuel_rate =
       match params.(1) with
@@ -26,7 +27,7 @@ module Solver (D : Domain) = struct
       | _          -> failwith "Invalid fuel rate rate"
     in
     let move_to_pos = D.move_to_pos ~fuel_rate in
-    let crabs = Seq.head_exn lines |> D.of_string in
+    let crabs = Zlist.head_exn lines |> D.of_string in
     let mean_pos =
       let positions = D.positions crabs in
       List.reduce_exn ( + ) positions / List.length positions

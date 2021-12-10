@@ -1,9 +1,86 @@
+module Zlist = struct
+  include Zlist
+
+  let uncons z =
+    let open Containers.Option.Infix in
+    let+ x = Zlist.head z in
+    (x, Zlist.tail z)
+
+  let to_seq l = Seq.unfold uncons l
+
+  let to_list z =
+    Zlist.fold_left (Fun.flip List.cons ) [] z |> List.rev
+
+  let head_exn z = Zlist.head z |> Containers.Option.get_exn_or "head of empty Zlist.t"
+end
+
+(* TODO rm? *)
+module LSeq = struct
+  type 'a t = 'a cell Lazy.t
+
+  and 'a cell =
+    | Cons of ('a * 'a t)
+    | Nil
+
+  let nil : 'a t = lazy Nil
+
+  let cons x xs : 'a t = lazy (Cons (x, Lazy.from_fun xs))
+
+  let uncons xs =
+    match xs with
+    | (lazy (Cons (x, xs))) -> Some (x, xs)
+    | (lazy Nil)            -> None
+
+  let rec unfold : ('src -> ('a * 'src) option) -> 'src -> 'a t =
+   fun f src ->
+    match f src with
+    | Some (x, src) -> cons x (fun () -> Lazy.force (unfold f src))
+    | None          -> nil
+
+  let rec map : ('a -> 'b) -> 'a t -> 'b t =
+   fun f l ->
+    Lazy.from_fun (fun () ->
+        Lazy.force
+        @@
+        match l with
+        | (lazy (Cons (x, xs))) -> cons (f x) (fun () -> Lazy.force (map f xs))
+        | (lazy Nil)            -> nil)
+
+  let rec fold_left : ('acc -> 'a -> 'acc) -> 'acc -> 'a t -> 'acc =
+   fun f init l ->
+    match uncons l with
+    | Some (x, xs) -> fold_left f (f init x) xs
+    | None         -> init
+
+  let lines_of_in_channel ic =
+    let read () =
+      try Some (input_line ic, ()) with
+      | End_of_file -> None
+    in
+    unfold read ()
+
+  let to_list t =
+    let rec aux acc s =
+      match uncons s with
+      | None         -> List.rev acc
+      | Some (x, xs) -> aux (x :: acc) xs
+    in
+    aux [] t
+end
+
+(* let lazy_lines_of_in_channel ic =
+ *   let rec read_lazy_line () : (string * string Lazy.t) option =
+ *     try Some (input_line ic, Lazy.from_fun read_lazy_line) with
+ *     | End_of_file -> None
+ *   in
+ *   Lazy.from_fun read_line *)
+
 let lines_of_in_channel ic =
   let read_line () =
-    try Some (input_line ic, ()) with
+    try Some ((), input_line ic) with
     | End_of_file -> None
   in
-  Seq.unfold read_line ()
+  Zlist.unfold () read_line
 
 module Option = struct
   include Option
@@ -118,10 +195,11 @@ module List = struct
 
   let remove_map f assoc =
     let rec aux ls acc =
-    match ls with
-    | [] -> (None, List.rev acc)
-    | x :: rest -> match f x with
-      | None -> aux rest (x :: acc)
+      match ls with
+      | []        -> (None, List.rev acc)
+      | x :: rest ->
+      match f x with
+      | None   -> aux rest (x :: acc)
       | Some a -> (Some a, List.rev acc @ rest)
     in
     aux assoc []

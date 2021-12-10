@@ -3,7 +3,7 @@ open Lib
 let solve params lines =
   let window_size = params.(1) |> int_of_string in
   match
-    lines |> Seq.map int_of_string |> Seq.slide_n window_size |> Seq.uncons
+    lines |> Zlist.map int_of_string |> Zlist.to_seq |> Seq.slide_n window_size |> Seq.uncons
   with
   | None               -> failwith "no input"
   | Some (first, rest) ->

@@ -40,6 +40,6 @@ let solve params lines =
     | _       -> failwith "invalid part"
   in
   lines
-  |> Seq.map parse_line
-  |> Seq.fold_left update_f empty_state
+  |> Zlist.map parse_line
+  |> Zlist.fold_left update_f empty_state
   |> fun { horizontal; depth; _ } -> horizontal * depth

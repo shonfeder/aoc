@@ -19,34 +19,34 @@ module Power = struct
   let gamma_of_state st =
     st
     |> Seq.map (fun s ->
-        if s.one > s.zero then
-          1
-        else
-          0)
+           if s.one > s.zero then
+             1
+           else
+             0)
     |> Seq.to_list
     |> bin_digits_to_int
 
   let epsilon_of_state st =
     st
     |> Seq.map (fun s ->
-        if s.one < s.zero then
-          1
-        else
-          0)
+           if s.one < s.zero then
+             1
+           else
+             0)
     |> Seq.to_list
     |> bin_digits_to_int
 
   let update_state : state -> int Array.t -> state =
-    fun state line -> Seq.map2 count_bit state (Array.to_seq line)
+   fun state line -> Seq.map2 count_bit state (Array.to_seq line)
 
-  let solve (lines : int array Seq.t) =
-    let digits = Seq.hd lines |> Option.get |> Array.length in
-    lines |> Seq.fold_left update_state (init digits) |> fun st ->
+  let solve (lines : int array Zlist.t) =
+    let digits = Zlist.head lines |> Option.get |> Array.length in
+    lines |> Zlist.fold_left update_state (init digits) |> fun st ->
     gamma_of_state st * epsilon_of_state st
 end
 
 let nth_bits : int -> int Array.t Seq.t -> int Array.t Seq.t =
-  fun n lines -> Seq.map (fun l -> [| l.(n) |]) lines
+ fun n lines -> Seq.map (fun l -> [| l.(n) |]) lines
 
 module Life = struct
   type nums =
@@ -67,24 +67,22 @@ module Life = struct
     }
 
   let add_line : st -> int Array.t -> st =
-    fun st ln ->
+   fun st ln ->
     match ln.(st.column) with
     | 0 ->
-      { st with
-        zeros =
-          { count = succ st.zeros.count; vals = ln :: st.zeros.vals }
-      }
+        { st with
+          zeros = { count = succ st.zeros.count; vals = ln :: st.zeros.vals }
+        }
     | 1 ->
-      { st with
-        ones =
-          { count = succ st.ones.count; vals = ln :: st.ones.vals }
-      }
+        { st with
+          ones = { count = succ st.ones.count; vals = ln :: st.ones.vals }
+        }
     | _ -> failwith "invalid bit"
 
   let next_col st = init (succ st.column)
 
   (* YUCK :( *)
-  let solve (lines : int Array.t Seq.t) =
+  let solve (lines : int Array.t Zlist.t) =
     let process st lines = List.fold_left add_line st lines in
     let rec oxygen st lines =
       let st' = process st lines in
@@ -102,7 +100,7 @@ module Life = struct
     let rec scrubber st lines =
       let st' = process st lines in
       let next = next_col st' in
-      match st'.ones.count, st'.zeros.count with
+      match (st'.ones.count, st'.zeros.count) with
       | 1, 1 -> st'.zeros.vals |> List.hd
       | 0, 1 -> st'.zeros.vals |> List.hd
       | 1, 0 -> st'.ones.vals |> List.hd
@@ -112,7 +110,7 @@ module Life = struct
       | o, z when o = z -> scrubber next st'.zeros.vals
       | _ -> failwith ""
     in
-    let nums = List.of_seq lines in
+    let nums = Zlist.to_list lines in
     let st = init 0 in
     let ox = oxygen st nums |> Array.to_list |> bin_digits_to_int in
     let sc = scrubber st nums |> Array.to_list |> bin_digits_to_int in
@@ -127,9 +125,9 @@ let solve params lines =
     | _       -> failwith "Invalid command"
   in
   lines
-  |> Seq.map (fun line ->
-      String.to_seq line
-      |> Array.of_seq
-      |> Array.map (String.make 1)
-      |> Array.map int_of_string)
+  |> Zlist.map (fun line ->
+         String.to_seq line
+         |> Array.of_seq
+         |> Array.map (String.make 1)
+         |> Array.map int_of_string)
   |> decoder

@@ -1,5 +1,5 @@
 module type Solver = sig
-  val solve : string Array.t -> string Seq.t -> int
+  val solve : string Array.t -> string Zlist.t -> int
 end
 
 let solvers : (module Solver) Array.t =
@@ -11,6 +11,7 @@ let solvers : (module Solver) Array.t =
    ; (module Day6)
    ; (module Day7)
    ; (module Day8)
+   ; (module Day9)
   |]
 
 let () =

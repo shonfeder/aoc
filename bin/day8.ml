@@ -36,7 +36,7 @@ module Solver (D : Domain) = struct
 
   let count_output_totals acc entry = acc + D.output_value entry
 
-  let solve : string Array.t -> string Seq.t -> int =
+  let solve : string Array.t -> string Zlist.t -> int =
    fun params lines ->
     let counter =
       match params.(1) with
@@ -44,8 +44,8 @@ module Solver (D : Domain) = struct
       | "totals" -> count_output_totals
       | cmd      -> failwith ("invalid command " ^ cmd)
     in
-    Seq.map D.of_string lines
-    |> Seq.fold_left counter 0
+    Zlist.map D.of_string lines
+    |> Zlist.fold_left counter 0
 end
 
 module D : Domain = struct
