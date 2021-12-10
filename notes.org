@@ -6,16 +6,17 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-08 Wed 21:41]
+#+CAPTION: Clock summary at [2021-12-09 Thu 22:49]
 | Headline                | Time   |      |
 |-------------------------+--------+------|
-| *Total time*            | *8:03* |      |
+| *Total time*            | *9:51* |      |
 |-------------------------+--------+------|
-| Tracking and Reflection | 8:03   |      |
+| Tracking and Reflection | 9:51   |      |
 | \_  Day 5               |        | 1:53 |
 | \_  Day 6               |        | 1:09 |
 | \_  Day 7               |        | 2:31 |
 | \_  Day 8               |        | 2:30 |
+| \_  Day 9               |        | 1:48 |
 #+END:
 
 
@@ -247,7 +248,7 @@ Still, my process overall is working pretty well.
 **** To improve
 ...
 
-** STRT Day 8
+** DONE Day 8
 :LOGBOOK:
 CLOCK: [2021-12-08 Wed 20:56]--[2021-12-08 Wed 21:33] =>  0:37
 CLOCK: [2021-12-08 Wed 19:26]--[2021-12-08 Wed 20:21] =>  0:55
@@ -347,20 +348,29 @@ this is taking a toll. So, I must make time for this tomorrow.
 
 ** STRT Day 9
 :LOGBOOK:
+CLOCK: [2021-12-09 Thu 21:25]
 CLOCK: [2021-12-09 Thu 10:05]--[2021-12-09 Thu 11:06] =>  1:01
 CLOCK: [2021-12-09 Thu 09:58]--[2021-12-09 Thu 09:59] =>  0:01
 CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 :END:
 *** Specification
+**** Part 1
 - Input: a 2-d matrix of single digit numbers, representing heights of each position
 - Output: The sum of the *risk levels* of the *low points*
 
 - low point :: locations with a lower value than all adjacent positions
 - adjacent positions :: Positions in the matrix are only considered to have straight (not diagonal) adjacency, so max 4 adjacent points to each position.
 - risk level :: 1 plus the height
+
+**** Part 2
+- Input: a 2-d matrix of single digit numbers, representing heights of each position
+- Output: The sum of the sizes of the 3 largets *basins*
+
+- basin :: A contiguous area of adjacent positions < 9
 *** Implementation
 [[./bin/day9.ml][Solution]]
 
+**** Part 1
 - read input into 2-d matrix of ints
 - identify low points
   - for each position in the matrix, measure whether it is < all adjacent
@@ -371,22 +381,49 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   - position + 1
 - sum calculated risk in accumulator constructed while scanning the matrix
 
+**** Part 2
+- represent map as 2-d matrix of ={x: int, y: int, height: int; marked: bool}=
+- beginning with the top left position, start a basin size counter
+  - check whether the current position is < 9
+  - if so,
+    - mark the position
+    - get all adjacent positions < 9
+    - add 1 to size counter
+    - repeat for adjacent
+  - otherwise, return the current size
+- keep a sorted list of the bason sizes
+- after all basins are marked, return the sum of the 3 biggest sizes
+
 *** Reflection
 **** Errors
 - First run of part 1 produced 0.
-  Due to the way that the implementation of `Seq.to_array` is defined in
-  containers. It first iterates through the whole sequence to get the length,
-  and this breaks the functionality with Seq!
+
+  This turned out to be due to the way that the implementation of `Seq.to_array`
+  is defined in containers. It first iterates through the whole sequence to get
+  the length, and this breaks the functionality with Seq! >:(
   https://github.com/c-cube/ocaml-containers/blob/74954f53a0e5cb87ab6ce7affac23dd2ba2812eb/src/core/CCSeq.ml#L397
 
 - This is the second time very surprising behavior with Seq has caused huge time
   blocks.
+- Part 2: My logic in the map search routine ended up quite ad hoc and sloppy. I
+  should have just build up a graph of connected edges and done a standard
+  search, but instead I tried to work off of the matrix, and didn't think
+  through my algorithm carefully enough before diving in.
+- I burnt like 2 hours implementing the start of a lazy sequence library to
+  avoid the problem I kept hitting with mutable state. I got a much better for
+  the dance of interweaving thunks between lazy/force required for such libs,
+  but I almost ran out of time to complete the AOC challenges and still get
+  enough sleep.
 **** To improve
 - Implement (lazy so memoized?) streaming from file?
   - Later... Before even completing part 2 I've ported everything to a properly lazy
     (i.e., memoized) stream based interface, which should protect me from these
     kinds of mistakes in the future!
-
+- Unless you want to spend hours upon hours implementing basic lib utilities
+  (fun! but not sustainable alongside doing AOC in my free time), or you want to
+  do very mercenary implementations without nice abstractions, look for existing
+  libraries to use before starting to roll you own!
+- Use the graphs!
 * Template
 ** Day N
 *** Specification

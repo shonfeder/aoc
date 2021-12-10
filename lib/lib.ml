@@ -8,10 +8,17 @@ module Zlist = struct
 
   let to_seq l = Seq.unfold uncons l
 
-  let to_list z =
-    Zlist.fold_left (Fun.flip List.cons ) [] z |> List.rev
+  let to_list z = Zlist.fold_left (Fun.flip List.cons) [] z |> List.rev
 
-  let head_exn z = Zlist.head z |> Containers.Option.get_exn_or "head of empty Zlist.t"
+  let head_exn z =
+    Zlist.head z |> Containers.Option.get_exn_or "head of empty Zlist.t"
+
+  let mapi : (int -> 'a -> 'b) -> 'a t -> 'b t =
+   fun f z ->
+    let open Containers.Option.Infix in
+    Zlist.unfold (0, z) (fun (i, z) ->
+        let+ x, xs = uncons z in
+        ((succ i, xs), f i x))
 end
 
 (* TODO rm? *)
