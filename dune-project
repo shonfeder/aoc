@@ -21,7 +21,7 @@
  (name aoc2021)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune containers)
+ (depends ocaml dune containers zlist)
  (tags
   (topics "to describe" your project)))
 
