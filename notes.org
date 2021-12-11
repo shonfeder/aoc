@@ -30,7 +30,7 @@ problems.
    - Add module =DayN.ml= to [[./bin]]
    - Add skeleton to module:
        #+begin_src ocaml
-open Containers
+open! Containers
 open Lib
 
 module type Domain = sig
@@ -38,7 +38,7 @@ module type Domain = sig
 end
 
 module Solver (D : Domain) : Solver = struct
-  let solve _params _lines ->
+  let solve _params _lines =
       failwith "TODO Solution to puzzle"
 end
 
@@ -51,8 +51,6 @@ include Solver (D)
        #+end_src
      - Register the module in the [[./bin/main.ml::5][solvers]]
 3. Set up test harness in  [[./test]]
-   - Copy test input into =./test/dayN.t/test=
-   - Copy puzzle input into =./test/dayN.t/input=
    - Set up integration tests in =./test/dayN.t/run.t=
      #+begin_src
 https://adventofcode.com/2021/day/<N>
@@ -62,7 +60,12 @@ https://adventofcode.com/2021/day/<N>
 Part 1:
 
   $ aoc2021 < test
+
+
+  $ aoc2021 < input
      #+end_src
+   - Copy test input into =./test/dayN.t/test=
+   - Copy puzzle input into =./test/dayN.t/input=
 4. Extract semi-formal specification from puzzle description (as bullet points)
 5. Write implementation plan as bullet points
 6. Specify the =Domain= interface
@@ -514,6 +517,62 @@ This is a balanced parenthesis problem.
   property in my restatement of the spec.
 **** To improve
 - Note any key properties of the data/system while writing my own english spec.
+
+** DONE Day 11
+:LOGBOOK:
+CLOCK: [2021-12-11 Sat 17:11]--[2021-12-11 Sat 17:51] =>  0:40
+CLOCK: [2021-12-11 Sat 14:33]--[2021-12-11 Sat 16:42] =>  2:09
+CLOCK: [2021-12-11 Sat 09:56]--[2021-12-11 Sat 10:39] =>  0:43
+CLOCK: [2021-12-11 Sat 08:58]--[2021-12-11 Sat 09:31] =>  0:33
+:END:
+*** Specification
+- Input: An *OctoMap*
+
+- OctoMap :: A 2-d matrix of integers.
+  - The position of the integer in the matrix represents the octopus' position
+    relative to its *adjacent* octopodes
+  - The value of the integer represents the octopus' *energy level*
+- adjacent :: Octopodes that are above, below, at diagonals are adjacent, so
+  ocotpodes have at most 8 adjacent companions
+- energy level :: Energy level is a natural number.
+  - It acts as a timer, incremented each *step*, and when adjacent octopodes
+    *flash*.
+  - When the timer increments beyond 9, the octopus *flashes* all adjacent octopodes, and resets
+  to 0.
+- step :: Gobal time increment, during which the following transitions occur:
+  - Energy level of each octopus increments by 1
+  - Any octopus with energy level > 9 *flashes*, which may cause adjacent
+    octopodes to flash
+  - Any octopus with an energy level > 9 is resent to 0
+- flash ::
+  - Octopodes at energy levels > 9 flash on a step before being reset.
+  - When an octopus flashes, it increments the energy level of all adjacent octopodes
+  - *But* an octopus can only flash at most once per step.
+**** Part 1
+- Output: The number of *octo-flashes* after 100 *steps*
+*** Implementation
+[[./bin/day11.ml][Solution]]
+
+This is a combination of Day 9, where we had to search a matrix and reason about
+adjacent positions, and Day 6, where we had to track counter states, so expect
+to borrow code, ideas from those.
+*** Reflection
+**** Errors
+- Missed one cordinate in the helper function written to select adjacent
+  positions from matrix. Probably killed an hour of debugging.
+- I've not been doing any unit testing. Shame on me. :/
+- Debugging takes a long time, because I have to write out my printers, and put
+  in printfs, then remove them.
+**** To improve
+- I don't like that the specs and plans are so far from the actual code.
+  Starting from today, I will write the english language refinements as docs
+  over the code itself. This is fitting, since the whole point of the =Domain=
+  signature is to give a staticaly verified specification. (This imposes a bit
+  of overhead today, as I'll have to copy over what I've written so far).
+- Going forward, only the reflections will be recorded in these notes.
+- Write unit tests/prop tests for any general purpose functions written
+- Write pps for each data type
+- Start using logging
 * Template
 ** Day N
 *** Specification
@@ -526,3 +585,4 @@ This is a balanced parenthesis problem.
 * Tasks
 ** TODO Make a PR to add utility functions back into Zlist
  https://github.com/hakuch/zlist
+** TODO Rename solutions to have prefixed 0

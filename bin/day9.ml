@@ -116,26 +116,10 @@ module D : Domain = struct
     |> Zlist.to_list
     |> Array.of_list
 
-  open Option.Infix
+  let fold = Matrix.fold
 
   let adjacent { x; y; _ } (t : t) =
-    List.filter_map
-      Fun.id
-      [ (let* up_row = Array.get_safe t (y + 1) in
-         Array.get_safe up_row x)
-      ; (let* down_row = Array.get_safe t (y - 1) in
-         Array.get_safe down_row x)
-      ; (let* row = Array.get_safe t y in
-         Array.get_safe row (x + 1))
-      ; (let* row = Array.get_safe t y in
-         Array.get_safe row (x - 1))
-      ]
-
-  let fold f init t =
-    Array.fold
-      (fun acc row -> Array.fold (fun acc' a -> f acc' a) acc row)
-      init
-      t
+    Matrix.adjacent ~x ~y t |> Matrix.elements |> List.filter_map Fun.id
 end
 
 (* Instantiate the solver *)

@@ -1,4 +1,4 @@
 (executable
  (public_name aoc2021)
  (name main)
- (libraries lib str containers zlist))
+ (libraries lib str containers zlist unix))

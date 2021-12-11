@@ -234,5 +234,58 @@ module String = struct
     aux 0 []
 end
 
+module Matrix = struct
+  type 'a t = 'a Array.t Array.t
+
+  let fold f init t =
+    Array.fold
+      (fun acc row -> Array.fold (fun acc' a -> f acc' a) acc row)
+      init
+      t
+
+  let iter f t = fold (fun () x -> f x) () t
+
+  open Option.Infix
+
+  let set ~x ~y m v = m.(y).(x) <- v
+
+  let get_opt ~x ~y t =
+    let* row = Array.get_safe t y in
+    Array.get_safe row x
+
+  (* TODO it'd be cool to have slices over an underlying array *)
+
+  (** A 3x3 matrix of optional values that are adjacent to position x,y
+      note that position 1,1 in the array is always [None]  *)
+  let adjacent ?(diagonal = false) ~x ~y t =
+    let iter = Option.iter in
+    let adj = Array.make_matrix 3 3 None in
+    let set ~x ~y v = set ~x ~y adj (Some v) in
+    let () =
+      (* up *)
+      get_opt ~x ~y:(y - 1) t |> iter (set ~x:1 ~y:0);
+      (* down *)
+      get_opt ~x ~y:(y + 1) t |> iter (set ~x:1 ~y:2);
+      (* left *)
+      get_opt ~x:(x - 1) ~y t |> iter (set ~x:0 ~y:1);
+      (* right *)
+      get_opt ~x:(x + 1) ~y t |> iter (set ~x:2 ~y:1);
+      if diagonal then (
+        (* up-left *)
+        get_opt ~x:(x - 1) ~y:(y - 1) t |> iter (set ~x:0 ~y:0);
+        (* up-right *)
+        get_opt ~x:(x + 1) ~y:(y - 1) t |> iter (set ~x:2 ~y:0);
+        (* down-left *)
+        get_opt ~x:(x - 1) ~y:(y + 1) t |> iter (set ~x:0 ~y:2);
+        (* down-right *)
+        get_opt ~x:(x + 1) ~y:(y + 1) t |> iter (set ~x:2 ~y:2)
+      )
+    in
+    adj
+
+  (** A list of the elements in the matrix *)
+  let elements t = fold (fun ls x -> x :: ls) [] t |> List.rev
+end
+
 let bin_digits_to_int : int list -> int =
  fun digits -> List.fold_left (fun acc d -> (acc * 2) + d) 0 digits
