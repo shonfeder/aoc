@@ -6,18 +6,19 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-10 Fri 21:21]
+#+CAPTION: Clock summary at [2021-12-11 Sat 17:52]
 | Headline                | Time    |      |
 |-------------------------+---------+------|
-| *Total time*            | *12:32* |      |
+| *Total time*            | *16:37* |      |
 |-------------------------+---------+------|
-| Tracking and Reflection | 12:32   |      |
+| Tracking and Reflection | 16:37   |      |
 | \_  Day 5               |         | 1:53 |
 | \_  Day 6               |         | 1:09 |
 | \_  Day 7               |         | 2:31 |
 | \_  Day 8               |         | 2:30 |
 | \_  Day 9               |         | 2:43 |
 | \_  Day 10              |         | 1:46 |
+| \_  Day 11              |         | 4:05 |
 #+END:
 
 * Process
@@ -73,7 +74,7 @@ Part 1:
 8. Implement =Domain= in =D=
 
 * Tracking and Reflection
-** Days 1 to 5
+** DONE Days 1 to 5
 
 Was not taking notes or recording times.
 
@@ -92,7 +93,6 @@ Main takeaways:
 - Bullet-point out the key details of the specification before starting to code
   up anything. Most of the mistakes that have slowed me down have come from
   making minor mistakes at the value-level during specification.
-
 
 ** DONE Day 5
 :LOGBOOK:
