@@ -1,5 +1,5 @@
 open Containers
-module Zlist = Lib.Zlist
+open Lib
 
 module type Domain = sig
   (* Map of positions *)
@@ -105,21 +105,11 @@ module D : Domain = struct
   (* let print t =
    *   Array.iter (fun row -> Array.iter (Printf.printf "%d ") row; print_newline ()) t *)
 
-  let explode str =
-    let len = String.length str in
-    let rec aux i acc =
-      if i < len then
-        aux (succ i) (String.sub str i 1 :: acc)
-      else
-        List.rev acc
-    in
-    aux 0 []
-
   let of_lines lines =
     lines
     |> Zlist.mapi (fun y l ->
            l
-           |> explode
+           |> String.explode
            |> List.mapi (fun x n ->
                   { x; y; height = Int.of_string_exn n; visited = false })
            |> Array.of_list)

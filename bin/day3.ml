@@ -40,7 +40,7 @@ module Power = struct
    fun state line -> Seq.map2 count_bit state (Array.to_seq line)
 
   let solve (lines : int array Zlist.t) =
-    let digits = Zlist.head lines |> Option.get |> Array.length in
+    let digits = Zlist.head lines |> Option.get_exn_or "empty input" |> Array.length in
     lines |> Zlist.fold_left update_state (init digits) |> fun st ->
     gamma_of_state st * epsilon_of_state st
 end

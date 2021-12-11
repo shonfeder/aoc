@@ -6,19 +6,19 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-09 Thu 22:49]
-| Headline                | Time   |      |
-|-------------------------+--------+------|
-| *Total time*            | *9:51* |      |
-|-------------------------+--------+------|
-| Tracking and Reflection | 9:51   |      |
-| \_  Day 5               |        | 1:53 |
-| \_  Day 6               |        | 1:09 |
-| \_  Day 7               |        | 2:31 |
-| \_  Day 8               |        | 2:30 |
-| \_  Day 9               |        | 1:48 |
+#+CAPTION: Clock summary at [2021-12-10 Fri 21:21]
+| Headline                | Time    |      |
+|-------------------------+---------+------|
+| *Total time*            | *12:32* |      |
+|-------------------------+---------+------|
+| Tracking and Reflection | 12:32   |      |
+| \_  Day 5               |         | 1:53 |
+| \_  Day 6               |         | 1:09 |
+| \_  Day 7               |         | 2:31 |
+| \_  Day 8               |         | 2:30 |
+| \_  Day 9               |         | 2:43 |
+| \_  Day 10              |         | 1:46 |
 #+END:
-
 
 * Process
 
@@ -31,19 +31,19 @@ problems.
    - Add skeleton to module:
        #+begin_src ocaml
 open Containers
+open Lib
 
 module type Domain = sig
-(* TODO Specification of domain *)
+  (* TODO Specification of domain *)
 end
 
-module Solver (D : Domain) = struct
-let solve : string Array.t -> string Seq.t -> int =
-    fun _params _lines ->
-    failwith "TODO Solution to puzzle"
+module Solver (D : Domain) : Solver = struct
+  let solve _params _lines ->
+      failwith "TODO Solution to puzzle"
 end
 
 module D : Domain = struct
-(* TODO Implementation of domain *)
+  (* TODO Implementation of domain *)
 end
 
 (* Instantiate the solver *)
@@ -346,9 +346,9 @@ specs and plans into implementation.
 I neglected to exercise today or yesterday (aside from a short walk). I suspect
 this is taking a toll. So, I must make time for this tomorrow.
 
-** STRT Day 9
+** DONE Day 9
 :LOGBOOK:
-CLOCK: [2021-12-09 Thu 21:25]
+CLOCK: [2021-12-09 Thu 21:25]--[2021-12-09 Fri 22:20] =>  0:55
 CLOCK: [2021-12-09 Thu 10:05]--[2021-12-09 Thu 11:06] =>  1:01
 CLOCK: [2021-12-09 Thu 09:58]--[2021-12-09 Thu 09:59] =>  0:01
 CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
@@ -371,10 +371,10 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 [[./bin/day9.ml][Solution]]
 
 **** Part 1
-- read input into 2-d matrix of ints
+- read input 2-d matrix of ints
 - identify low points
   - for each position in the matrix, measure whether it is < all adjacent
-    positions
+    position intos
   - adjacent positions given by +/1 each of x and y indices (use safe get values
     to detect edges and corners).
 - calculate risk
@@ -415,7 +415,7 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   but I almost ran out of time to complete the AOC challenges and still get
   enough sleep.
 **** To improve
-- Implement (lazy so memoized?) streaming from file?
+- [x] Implement (lazy so memoized?) streaming from file?
   - Later... Before even completing part 2 I've ported everything to a properly lazy
     (i.e., memoized) stream based interface, which should protect me from these
     kinds of mistakes in the future!
@@ -424,6 +424,96 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   do very mercenary implementations without nice abstractions, look for existing
   libraries to use before starting to roll you own!
 - Use the graphs!
+** DONE Day 10
+:LOGBOOK:
+CLOCK: [2021-12-10 Fri 20:22]--[2021-12-10 Fri 21:14] =>  0:52
+CLOCK: [2021-12-10 Fri 17:00]--[2021-12-10 Fri 17:31] =>  0:31
+CLOCK: [2021-12-10 Fri 07:12]--[2021-12-10 Fri 07:35] =>  0:23
+:END:
+*** Specification
+
+- Input :: Lines of chunks, which may be *incomplete* or *corrupted*
+
+- chunks ::
+  - opened/closed with matching pairs of ~(),[],{},<>~
+  - can be nested
+  - spread out accross lines?
+- corrupted line ::
+  - A chunk closes with the wrong character
+  - A corrupted chunk anywhere in a line corrupted whole line
+- syntax error score ::
+  - A corrupted line has score based on which incorrect bracket appears first
+  - ~)~ :: 3 points
+  - ~]~ :: 57 points
+  - ~}~ :: 1197 points
+  - ~>~ :: 25137 points
+- incomplete line (part 2 only) ::
+  - An incomplete line is missing closing brackets
+- autocomplete score ::
+  - base is 0
+  - for each character added multiply the running score by 5
+  - then increase total by th epoint value given in this table, based on the character:
+
+    | bracket | points |
+    |---------+--------|
+    | ~)~     |      1 |
+    | ~]~     |      2 |
+    | ~}~     |      3 |
+    | ~>~     |      4 |
+  - so the scoring is given by a fold over the remaining characters where a
+    function ~f : total:int -> char -> int = total * 5 + (score char)~
+
+
+**** Part 1
+
+- Output :: Sum of syntax error scores for each corrupted line
+
+**** Part 2
+
+- Output :: median of the *autocomplete scores* for each incomplete line
+
+*** Implementation
+[[./bin/day10.ml][Solution]]
+
+**** Part 1
+
+This is a balanced parenthesis problem.
+
+- fold over the lines with an accumulator =score : int=
+  - initialize an empty stack
+  - explode line contents into characters
+  - fold over chars with an accumulator =(stack : char Stack.t, error : char option)=
+    - if =error= is =None=
+      - open brackets are added to the stack
+      - closed brackets pop a char off the stack
+        - if the popped char is the matching bracket, proceed
+        - if the popped char is not a match, then =error = Some char=
+  - if the result of folding over he line chars is =Some char=, record the
+    syntax error score corresponding to the =char= in the =score=.
+
+**** Part 2
+
+- Discard all *corrupted lines*
+- For each remaining line
+  - reverse he order of chars
+  - proceed as with error detection, but instead of accumulating the =error
+    option= accumulate all brackets that do not have an "opening" pair (really,
+    these are the missing closing parens, but recall we are working in reverse order)
+- Accumulate a sorted list of each completion score
+- Finally, return the median
+
+*** Reflection
+**** Errors
+- I didn't take into account the non-commutativity of the completion scoring
+  operation, and was processing the closing brackets in reverse order, leading
+  to incorrect scores.
+- I had previously noted the non-commutativity of this scoring while reading the
+  problem spec, so it was a clear oversight on my part to neglect this in my
+  solution.
+- It was probably assured by the fact that I neglected to make note of this
+  property in my restatement of the spec.
+**** To improve
+- Note any key properties of the data/system while writing my own english spec.
 * Template
 ** Day N
 *** Specification
@@ -432,3 +522,7 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 *** Reflection
 **** Errors
 **** To improve
+
+* Tasks
+** TODO Make a PR to add utility functions back into Zlist
+ https://github.com/hakuch/zlist

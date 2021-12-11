@@ -1,3 +1,7 @@
+module type Solver = sig
+  val solve : string Array.t -> string Zlist.t -> int
+end
+
 module Zlist = struct
   include Zlist
 
@@ -21,7 +25,10 @@ module Zlist = struct
         ((succ i, xs), f i x))
 end
 
+open Containers
+
 (* TODO rm? *)
+(* First see if anything can be upstreamed to zlist *)
 module LSeq = struct
   type 'a t = 'a cell Lazy.t
 
@@ -196,7 +203,7 @@ module Seq = struct
 end
 
 module List = struct
-  include Containers.List
+  include List
 
   let sum ls = List.fold_left ( + ) 0 ls
 
@@ -210,6 +217,21 @@ module List = struct
       | Some a -> (Some a, List.rev acc @ rest)
     in
     aux assoc []
+end
+
+module String = struct
+  include String
+
+  let explode str =
+    let len = length str in
+    let rec aux : int -> string List.t -> string List.t =
+     fun i acc ->
+      if Int.(i < len) then
+        aux (succ i) (String.sub str i 1 :: acc)
+      else
+        List.rev acc
+    in
+    aux 0 []
 end
 
 let bin_digits_to_int : int list -> int =
