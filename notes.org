@@ -586,3 +586,6 @@ to borrow code, ideas from those.
 ** TODO Make a PR to add utility functions back into Zlist
  https://github.com/hakuch/zlist
 ** TODO Rename solutions to have prefixed 0
+** TODO Ask containers whether they'd like a matrix library
+** DONE make a PR to fix behavior of =Containers.Seq.to_array=
+See: https://github.com/c-cube/ocaml-containers/pull/390
