@@ -1,3 +1,5 @@
 (library
  (name lib)
- (libraries containers zlist))
+ (inline_tests)
+ (libraries containers zlist)
+ (preprocess (pps ppx_inline_test)))

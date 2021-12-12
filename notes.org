@@ -6,12 +6,12 @@ my methodology.
 * Times/day summaries
 
 #+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-11 Sat 17:52]
+#+CAPTION: Clock summary at [2021-12-12 Sun 15:48]
 | Headline                | Time    |      |
 |-------------------------+---------+------|
-| *Total time*            | *16:37* |      |
+| *Total time*            | *19:25* |      |
 |-------------------------+---------+------|
-| Tracking and Reflection | 16:37   |      |
+| Tracking and Reflection | 19:25   |      |
 | \_  Day 5               |         | 1:53 |
 | \_  Day 6               |         | 1:09 |
 | \_  Day 7               |         | 2:31 |
@@ -19,6 +19,7 @@ my methodology.
 | \_  Day 9               |         | 2:43 |
 | \_  Day 10              |         | 1:46 |
 | \_  Day 11              |         | 4:05 |
+| \_  Day 12              |         | 2:48 |
 #+END:
 
 * Process
@@ -573,11 +574,29 @@ to borrow code, ideas from those.
 - Write unit tests/prop tests for any general purpose functions written
 - Write pps for each data type
 - Start using logging
+** DONE Day 12
+:LOGBOOK:
+CLOCK: [2021-12-12 Sun 15:15]--[2021-12-12 Sun 15:44] =>  0:29
+CLOCK: [2021-12-12 Sun 13:06]--[2021-12-12 Sun 14:36] =>  1:30
+CLOCK: [2021-12-12 Sun 13:00]--[2021-12-12 Sun 13:06] =>  0:06
+CLOCK: [2021-12-12 Sun 08:48]--[2021-12-12 Sun 09:31] =>  0:43
+:END:
+
+- [[./bin/day12.ml][Solution]]
+*** Reflection
+Writing the spec inline with the code worked well.
+**** Errors
+- Misread the spec of the part 2. I read it to allow entering every small cave
+  twice. In face, it allowed entering the one small cave twice. I probably would
+  have caught this, except I skipped the set of writing out the part 2 spec.
+- Some simple implementation errors along the way, but just the usual.
+  Having the logging lib set up helped debug much quicker.
+**** To improve
+- Don't take short cuts on part 2! :)
+
 * Template
-** Day N
-*** Specification
-*** Implementation
-[[./bin/dayN.ml][Solution]]
+** Day <N>
+- [[./bin/day<N>.ml][Solution]]
 *** Reflection
 **** Errors
 **** To improve

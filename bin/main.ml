@@ -12,9 +12,14 @@ let solvers : (module Solver) Array.t =
    ; (module Day9)
    ; (module Day10)
    ; (module Day11)
+   ; (module Day12)
   |]
 
 let () =
+  if Sys.getenv_opt "DEBUG" |> Option.is_some then
+    ( Logs.set_reporter (Logs_fmt.reporter ())
+    ; Logs.set_level (Some Logs.Debug));
+  Logs.debug (fun f -> f "Logging enabled");
   match Sys.getenv "AOC_DAY" with
   | exception Not_found ->
       print_endline "Missing AOC_DAY env var";
@@ -27,6 +32,6 @@ let () =
       exit 1
   | (module Solver) ->
       stdin
-      |> Lib.lines_of_in_channel
+      |> Lib.IO.zlist_of_lines_in
       |> Solver.solve Sys.argv
       |> Printf.printf "%d\n"

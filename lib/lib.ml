@@ -240,6 +240,14 @@ module String = struct
         List.rev acc
     in
     aux 0 []
+
+  module Set = Set.Make (String)
+end
+
+module Int = struct
+  include Int
+
+  module Set = Set.Make (Int)
 end
 
 module Matrix = struct

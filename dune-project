@@ -21,7 +21,12 @@
  (name aoc2021)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune containers zlist)
+ (depends ocaml
+          dune
+          containers
+          zlist
+          logs
+          ppx_inline_test)
  (tags
   (topics "to describe" your project)))
 

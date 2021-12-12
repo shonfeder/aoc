@@ -14,6 +14,8 @@ depends: [
   "dune" {>= "2.8"}
   "containers"
   "zlist"
+  "logs"
+  "ppx_inline_test"
   "odoc" {with-doc}
 ]
 build: [
