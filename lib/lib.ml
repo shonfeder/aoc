@@ -82,19 +82,24 @@ module LSeq = struct
     aux [] t
 end
 
-(* let lazy_lines_of_in_channel ic =
- *   let rec read_lazy_line () : (string * string Lazy.t) option =
- *     try Some (input_line ic, Lazy.from_fun read_lazy_line) with
- *     | End_of_file -> None
- *   in
- *   Lazy.from_fun read_line *)
+module IO = struct
+  include IO
 
-let lines_of_in_channel ic =
-  let read_line () =
-    try Some ((), input_line ic) with
-    | End_of_file -> None
-  in
-  Zlist.unfold () read_line
+  let fold_lines_in f init ic =
+    let rec aux acc =
+      match input_line ic with
+      | line                  -> aux (f acc line)
+      | exception End_of_file -> acc
+    in
+    aux init
+
+  let zlist_of_lines_in ic =
+    let read_line () =
+      try Some ((), input_line ic) with
+      | End_of_file -> None
+    in
+    Zlist.unfold () read_line
+end
 
 module Option = struct
   include Option
@@ -217,6 +222,9 @@ module List = struct
       | Some a -> (Some a, List.rev acc @ rest)
     in
     aux assoc []
+
+  let map_in_channel_lines f ic =
+    IO.fold_lines_in (fun acc x -> f x :: acc) [] ic |> List.rev
 end
 
 module String = struct
@@ -285,6 +293,9 @@ module Matrix = struct
 
   (** A list of the elements in the matrix *)
   let elements t = fold (fun ls x -> x :: ls) [] t |> List.rev
+
+  let map_in_channel_lines f ic =
+    List.map_in_channel_lines f ic |> Array.of_list
 end
 
 let bin_digits_to_int : int list -> int =
