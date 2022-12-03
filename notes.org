@@ -22,11 +22,11 @@ problems.
 
 #+NAME: TEMPLATE
 #+begin_src org-mode
-*** Day <N>
+** Day <N>
 - [[./2022/bin/day<N>.ml][Solution]]
-**** Reflection
-***** Errors
-***** To improve
+*** Reflection
+**** Errors
+**** To improve
 
 #+end_src
 
@@ -66,6 +66,17 @@ See: https://github.com/c-cube/ocaml-containers/pull/390
 #+END:
 
 * 2022
+** Day 1
+<2022-12-02 Fri>
+Started a day late. Note sure how much motivation but I'll play for the days I
+have steam :)
+
+- [[./2022/bin/day<N>.ml][Solution]]
+*** Reflection
+**** Errors
+**** To improve
+
+
 
 
 * 2021

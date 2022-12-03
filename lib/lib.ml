@@ -10,6 +10,8 @@ module Zlist = struct
     let+ x = Zlist.head z in
     (x, Zlist.tail z)
 
+  let cons : 'a -> 'a t -> 'a t = fun x z -> lazy (Cons (x, z))
+
   let to_seq l = Seq.unfold uncons l
 
   let to_list z = Zlist.fold_left (Fun.flip List.cons) [] z |> List.rev
@@ -29,7 +31,7 @@ module Zlist = struct
     let not_f x = not (f x) in
     (Zlist.take_while not_f z, Zlist.drop_while not_f z |> Zlist.tail)
 
-  let cons : 'a -> 'a t -> 'a t = fun x z -> lazy (Cons (x, z))
+  let sum : int t -> int = fun z -> Zlist.fold_left (+) 0 z
 end
 
 open Containers

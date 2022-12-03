@@ -11,21 +11,33 @@ let ml_skeleton =
 open! Containers
 open Lib
 
-module type Domain = sig
+module Types = struct
   (* TODO Specification of domain *)
+
+  type t = ..
 end
 
-module Solver (D : Domain) : Solver = struct
-  let solve _params _lines =
-      failwith "TODO Solution to puzzle"
+
+module type Operations = sig
+  include module type of Types
+
+  val parse : string Zlist.t -> t
 end
 
-module D : Domain = struct
+module Solver (O : Operations) : Solver = struct
+  let solve params _lines = match params.(1) with
+    | "1" -> failwith "TODO Solution to puzzle 1"
+    | "2" -> failwith "TODO Solution to puzzle 2"
+    |  c  -> failwith ("Invalid command " ^ c)
+end
+
+module O : Operations = struct
+  include Types
   (* TODO Implementation of domain *)
 end
 
 (* Instantiate the solver *)
-include Solver (D)
+include Solver (O)
 |}
 
 let test_skeleton year day =
