@@ -37,17 +37,17 @@ let test_skeleton day =
 
 Part 1:
 
-  $ aoc%s part-1 < test
+  $ aoc%s 1 < test
 
 
-  $ aoc%s part-2 < input
+  $ aoc%s 1 < input
 
 Part 1:
 
-  $ aoc%s < test
+  $ aoc%s 2 < test
 
 
-  $ aoc%s < input
+  $ aoc%s 2 < input
 |}
     aoc_year day day aoc_year aoc_year aoc_year aoc_year
 
