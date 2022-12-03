@@ -28,51 +28,15 @@ An evolving checklist of "best practices" emerging as I work through the
 problems.
 
 1. Add [[* Template][new entry]] for notes for the day and clock in
-2. Set up solution scaffolding:
-   - Add module =DayN.ml= to [[./bin]]
-   - Add skeleton to module:
-       #+begin_src ocaml
-open! Containers
-open Lib
-
-module type Domain = sig
-  (* TODO Specification of domain *)
-end
-
-module Solver (D : Domain) : Solver = struct
-  let solve _params _lines =
-      failwith "TODO Solution to puzzle"
-end
-
-module D : Domain = struct
-  (* TODO Implementation of domain *)
-end
-
-(* Instantiate the solver *)
-include Solver (D)
-       #+end_src
-     - Register the module in the [[./bin/main.ml::5][solvers]]
-3. Set up test harness in  [[./test]]
-   - Set up integration tests in =./test/dayN.t/run.t=
-     #+begin_src
-https://adventofcode.com/2021/day/<N>
-
-  $ export AOC_DAY=<N>
-
-Part 1:
-
-  $ aoc2021 < test
-
-
-  $ aoc2021 < input
-     #+end_src
+2. Initialize scaffolding with =dune exec init <N>=
+3. Set populate input data
    - Copy test input into =./test/dayN.t/test=
    - Copy puzzle input into =./test/dayN.t/input=
-4. Extract semi-formal specification from puzzle description (as bullet points)
-5. Write implementation plan as bullet points
-6. Specify the =Domain= interface
-7. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
-8. Implement =Domain= in =D=
+3. Extract semi-formal specification from puzzle description (as bullet points)
+4. Write implementation plan as bullet points
+5. Specify the =Domain= interface
+6. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
+7. Implement =Domain= in =D=
 
 * Tracking and Reflection
 ** DONE Days 1 to 5
@@ -594,6 +558,22 @@ Writing the spec inline with the code worked well.
 **** To improve
 - Don't take short cuts on part 2! :)
 
+** STRT Day 13
+:LOGBOOK:
+CLOCK: [2021-12-13 Mon 22:33]
+CLOCK: [2021-12-13 Mon 22:25]--[2021-12-13 Mon 22:32] =>  0:07
+CLOCK: [2021-12-13 Mon 21:46]--[2021-12-13 Mon 22:25] =>  0:39
+CLOCK: [2021-12-13 Mon 21:41]--[2021-12-13 Mon 21:46] =>  0:05
+CLOCK: [2021-12-13 Mon 20:00]--[2021-12-13 Mon 21:06] =>  1:06
+CLOCK: [2021-12-13 Mon 18:58]--[2021-12-13 Mon 19:46] =>  0:48
+CLOCK: [2021-12-13 Mon 17:46]--[2021-12-13 Mon 17:59] =>  0:13
+CLOCK: [2021-12-13 Mon 07:35]--[2021-12-13 Mon 07:36] =>  0:01
+:END:
+- [[./bin/day13.ml][Solution]]
+*** Reflection
+**** Errors
+**** To improve
+
 * Template
 ** Day <N>
 - [[./bin/day<N>.ml][Solution]]
@@ -606,5 +586,9 @@ Writing the spec inline with the code worked well.
  https://github.com/hakuch/zlist
 ** TODO Rename solutions to have prefixed 0
 ** TODO Ask containers whether they'd like a matrix library
+** STRT Automate skeleton setup
+:LOGBOOK:
+CLOCK: [2021-12-13 Mon 07:15]--[2021-12-13 Mon 07:34] =>  0:19
+:END:
 ** DONE make a PR to fix behavior of =Containers.Seq.to_array=
 See: https://github.com/c-cube/ocaml-containers/pull/390

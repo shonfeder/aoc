@@ -246,12 +246,13 @@ end
 
 module Int = struct
   include Int
-
   module Set = Set.Make (Int)
 end
 
 module Matrix = struct
   type 'a t = 'a Array.t Array.t
+
+  let make = Array.make_matrix
 
   let fold f init t =
     Array.fold
@@ -263,7 +264,7 @@ module Matrix = struct
 
   open Option.Infix
 
-  let set ~x ~y m v = m.(y).(x) <- v
+  let set ~x ~y m v = m.(x).(y) <- v
 
   let get_opt ~x ~y t =
     let* row = Array.get_safe t y in
@@ -304,6 +305,166 @@ module Matrix = struct
 
   let map_in_channel_lines f ic =
     List.map_in_channel_lines f ic |> Array.of_list
+end
+
+module Grid : sig
+  module Coord : sig
+    type t =
+      { x : int
+      ; y : int
+      }
+
+    include Map.OrderedType with type t := t
+  end
+
+  module Map : module type of Map.Make (Coord)
+
+  type 'a t
+
+  type dimensions =
+    { x_axis : int
+    ; y_axis : int
+    }
+
+  val empty : 'a t
+
+  val cardinal : 'a t -> int
+
+  val add : x:int -> y:int -> 'a -> 'a t -> 'a t
+
+  val get : x:int -> y:int -> 'a t -> 'a option
+
+  val split_on_x : int -> 'a t -> 'a t * 'a t
+  (**  [split_on_x x t] is [(left, right)], with the two parts being grids
+       containing everything that was on either side of the dividing line
+       drawn down [x]. Anything along [x] itself is removed.
+
+       All elements in [right] have their coordinates shifted to accord with
+       the new. *)
+
+  val split_on_y : int -> 'a t -> 'a t * 'a t
+  (**  [split_on_y y t] is [(top, bottom)], with the two parts being grids
+       containing everything that was on either side of the dividing line
+       drawn down [y]. Anything along [y] itself is removed.
+
+       All elements in [bottom] have their coordinates shifted to accord with
+       the new. *)
+
+  val flip_along_x : 'a t -> 'a t
+  (** [flip_along_x t] is [t] with the y coordinates of each column reveresed *)
+
+  val flip_along_y : 'a t -> 'a t
+  (** [flip_along_y t] is [t] with the x coordinates of each column reveresed *)
+
+  val fold : ('a -> 'acc -> 'acc) -> 'a t -> 'acc -> 'acc
+
+  val foldi : (x:int -> y:int -> 'a -> 'acc -> 'acc) -> 'a t -> 'acc -> 'acc
+
+  val combine : 'a t -> 'a t -> 'a t
+
+  val dimensions : 'a t -> dimensions
+
+  val to_matrix : 'a t -> 'a option Matrix.t
+end = struct
+  module Coord = struct
+    type t =
+      { x : int
+      ; y : int
+      }
+
+    let compare a b = Pair.compare Int.compare Int.compare (a.x, a.y) (b.x, b.y)
+  end
+
+  module Map = Map.Make (Coord)
+
+  type dimensions =
+    { x_axis : int
+    ; y_axis : int
+    }
+
+  type 'a t = 'a Map.t
+  (** Origin is the top left *)
+
+  let empty = Map.empty
+
+  let cardinal = Map.cardinal
+
+  let dimensions t =
+    let x_axis, y_axis =
+      Map.fold (fun { x; y } _ (x', y') -> (max x x', max y y')) t (0, 0)
+    in
+    { x_axis; y_axis }
+
+  let combine a b =
+    let merger _ a_v b_v =
+      match (a_v, b_v) with
+      | None, None -> None
+      | Some v, None -> Some v
+      | Some _, Some v
+      | None, Some v ->
+          Some v
+    in
+    Map.merge merger a b
+
+  let foldi f t init = Map.fold (fun { x; y } v acc -> f ~x ~y v acc) t init
+
+  let fold f t init = Map.fold (fun _ v acc -> f v acc) t init
+
+  let add ~x ~y v t = Map.add { x; y } v t
+
+  let get ~x ~y t = Map.get { x; y } t
+
+  let split_on_y y_split t =
+    let splitter ~x ~y v (top, bottom) =
+      (* is above split *)
+      if y < y_split then
+        (top, bottom)
+      (* is below split *)
+      else if y > y_split then
+        let top = Map.remove { x; y } top in
+        (* Offset the y axis relative to new origin *)
+        let bottom = Map.add { x; y = y - (y_split + 1) } v bottom in
+        (top, bottom)
+      else
+        (* is on y, so remove it *)
+        let top = Map.remove { x; y } top in
+        (top, bottom)
+    in
+    foldi splitter t (t, Map.empty)
+
+  let split_on_x x_split t =
+    let splitter ~x ~y v (left, right) =
+      (* is left of split *)
+      if x < x_split then
+        (left, right)
+      (* is right of split *)
+      else if x > x_split then
+        let left = Map.remove { x; y } left in
+        (* Offset the y axis relative to new origin *)
+        let right = Map.add { x = x - (x_split + 1); y } v right in
+        (left, right)
+      else
+        (* is on x, so remove it *)
+        let left = Map.remove { x; y } left in
+        (left, right)
+    in
+    foldi splitter t (t, Map.empty)
+
+  let flip_along_y t =
+    let { y_axis; _ } = dimensions t in
+    let flipper ~x ~y v t' = Map.add { x; y = y_axis - y } v t' in
+    foldi flipper t Map.empty
+
+  let flip_along_x t =
+    let { x_axis; _ } = dimensions t in
+    let flipper ~x ~y v t' = Map.add { y; x = x_axis - x } v t' in
+    foldi flipper t Map.empty
+
+  let to_matrix t =
+    let { x_axis; y_axis } = dimensions t in
+    let m = Array.make_matrix (succ x_axis) (succ y_axis) None in
+    Map.iter (fun { x; y } v -> m.(x).(y) <- Some v) t;
+    m
 end
 
 let bin_digits_to_int : int list -> int =
