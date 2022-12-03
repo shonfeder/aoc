@@ -1,0 +1,4 @@
+(executable
+ (public_name aoc2022)
+ (name main)
+ (libraries lib str containers zlist logs logs.fmt unix))

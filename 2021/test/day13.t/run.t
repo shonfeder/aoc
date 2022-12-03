@@ -13,9 +13,11 @@ Part 1:
 
 Part 2:
 
-  $ aoc2021 code-word < test
-  16
+I didn't get this part!
+
+$ aoc2021 code-word < test
+16
 
 
-  $ aoc2021 code-word < input
-  678
+$ aoc2021 code-word < input
+678

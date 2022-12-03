@@ -57,8 +57,8 @@ let () =
     |> Array.get_safe Sys.argv |> Option.get_exn_or "Missing argument DAY"
     |> Int.of_string           |> Option.get_exn_or "Invalid argument, exepected int"
   in
-  let ml_file_name = Printf.sprintf ".%s/bin/day%d.ml" year day in
-  let test_dir_name = Printf.sprintf ".%s/test/day%d.t" year day in
+  let ml_file_name = Printf.sprintf "./%s/bin/day%d.ml" year day in
+  let test_dir_name = Printf.sprintf "./%s/test/day%d.t" year day in
   let test_run_name = Printf.sprintf "%s/run.t" test_dir_name in
   IO.File.write_exn ml_file_name ml_skeleton;
   Sys.mkdir test_dir_name 0o777;

@@ -23,6 +23,13 @@ module Zlist = struct
     Zlist.unfold (0, z) (fun (i, z) ->
         let+ x, xs = uncons z in
         ((succ i, xs), f i x))
+
+  let split_on : ('a -> bool) -> 'a t -> 'a t * 'a t =
+    fun f z ->
+    let not_f x = not (f x) in
+    (Zlist.take_while not_f z, Zlist.drop_while not_f z |> Zlist.tail)
+
+  let cons : 'a -> 'a t -> 'a t = fun x z -> lazy (Cons (x, z))
 end
 
 open Containers
