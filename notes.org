@@ -3,31 +3,12 @@
 Notes aiming to provide reflection and insight on the process, so I can improve
 my methodology.
 
-* Times/day summaries
-
-#+BEGIN: clocktable :scope file :maxlevel 2
-#+CAPTION: Clock summary at [2021-12-12 Sun 15:48]
-| Headline                | Time    |      |
-|-------------------------+---------+------|
-| *Total time*            | *19:25* |      |
-|-------------------------+---------+------|
-| Tracking and Reflection | 19:25   |      |
-| \_  Day 5               |         | 1:53 |
-| \_  Day 6               |         | 1:09 |
-| \_  Day 7               |         | 2:31 |
-| \_  Day 8               |         | 2:30 |
-| \_  Day 9               |         | 2:43 |
-| \_  Day 10              |         | 1:46 |
-| \_  Day 11              |         | 4:05 |
-| \_  Day 12              |         | 2:48 |
-#+END:
-
 * Process
 
 An evolving checklist of "best practices" emerging as I work through the
 problems.
 
-1. Add [[* Template][new entry]] for notes for the day and clock in
+1. Add [[TEMPLATE][new entry]] for notes for the day and clock in
 2. Initialize scaffolding with =dune exec init <N>=
 3. Set populate input data
    - Copy test input into =./test/dayN.t/test=
@@ -38,8 +19,59 @@ problems.
 6. Implement preliminary =Solver= algorithm (usually calling for adjustments to =Domain=)
 7. Implement =Domain= in =D=
 
-* Tracking and Reflection
-** DONE Days 1 to 5
+
+#+NAME: TEMPLATE
+#+begin_src org-mode
+*** Day <N>
+- [[./2022/bin/day<N>.ml][Solution]]
+**** Reflection
+***** Errors
+***** To improve
+
+#+end_src
+
+* Tasks
+** TODO Make a PR to add utility functions back into Zlist
+ https://github.com/hakuch/zlist
+** TODO Rename solutions to have prefixed 0
+** TODO Ask containers whether they'd like a matrix library
+** STRT Automate skeleton setup
+:LOGBOOK:
+CLOCK: [2021-12-13 Mon 07:15]--[2021-12-13 Mon 07:34] =>  0:19
+:END:
+** DONE make a PR to fix behavior of =Containers.Seq.to_array=
+See: https://github.com/c-cube/ocaml-containers/pull/390
+
+* Time Tracking
+
+#+BEGIN: clocktable :scope file :maxlevel 3
+#+CAPTION: Clock summary at [2022-12-02 Fri 21:30]
+| Headline                    |    Time |       |      |
+|-----------------------------+---------+-------+------|
+| *Total time*                | *22:43* |       |      |
+|-----------------------------+---------+-------+------|
+| Tasks                       |    0:19 |       |      |
+| \_  Automate skeleton setup |         |  0:19 |      |
+| 2021                        |   22:24 |       |      |
+| \_  Tracking and Reflection |         | 22:24 |      |
+| \_    Day 5                 |         |       | 1:53 |
+| \_    Day 6                 |         |       | 1:09 |
+| \_    Day 7                 |         |       | 2:31 |
+| \_    Day 8                 |         |       | 2:30 |
+| \_    Day 9                 |         |       | 2:43 |
+| \_    Day 10                |         |       | 1:46 |
+| \_    Day 11                |         |       | 4:05 |
+| \_    Day 12                |         |       | 2:48 |
+| \_    Day 13                |         |       | 2:59 |
+#+END:
+
+* 2022
+
+
+* 2021
+** Tracking and Reflection
+
+*** DONE Days 1 to 5
 
 Was not taking notes or recording times.
 
@@ -59,18 +91,18 @@ Main takeaways:
   up anything. Most of the mistakes that have slowed me down have come from
   making minor mistakes at the value-level during specification.
 
-** DONE Day 5
+*** DONE Day 5
 :LOGBOOK:
 CLOCK: [2021-12-05 Sun 12:00]--[2021-12-05 Sun 12:13] =>  0:13
 CLOCK: [2021-12-05 Sun 09:28]--[2021-12-05 Sun 09:49] =>  0:21
 CLOCK: [2021-12-05 Sun 08:04]--[2021-12-05 Sun 09:23] =>  1:19
 :END:
 
-*** Implementation
+**** Implementation
 
 [[./bin/day5.ml][Solution]]
 
-**** Errors
+***** Errors
 - Was initializing map locations incorrectly initially, setting them to 0 at the
   first marked point, rather to 1.
 - Misread the specification: it called for returning the *number of points with
@@ -79,17 +111,17 @@ CLOCK: [2021-12-05 Sun 08:04]--[2021-12-05 Sun 09:23] =>  1:19
 
 Both of these errors are results of not carefully attending to *specific value
 ranges* detailed by the specification.
-**** To improve
+***** To improve
 
 - Bullet-point specification in english before writing formalizing specification
   in types.
 
-** DONE Day 6
+*** DONE Day 6
 :LOGBOOK:
 CLOCK: [2021-12-06 Mon 02:26]--[2021-12-06 Mon 03:35] =>  1:09
 :END:
 
-*** Specification
+**** Specification
 
 - Given :: A list of numbers representing ages of lanternfish
 - Produce :: The number of fish expected at 80 days
@@ -104,7 +136,7 @@ CLOCK: [2021-12-06 Mon 02:26]--[2021-12-06 Mon 03:35] =>  1:09
   - A new counter start at 8 (2 days to mature + 7 days to produce)
   - After a counter reaches 0, it resets to 6
 
-*** Implementation
+**** Implementation
 [[./bin/day6.ml][Solution]]
 
 - We only have 9 counter states to track: 0 to 8.
@@ -121,7 +153,7 @@ CLOCK: [2021-12-06 Mon 02:26]--[2021-12-06 Mon 03:35] =>  1:09
   defining an isomorphic mapping between the compressed representation and the
   list of counters.
 
-*** Reflection
+**** Reflection
 
 Today went very smoothly. Whether it was because today's puzzle was easier, or
 admitted an elegant solution more easily than previous days, whether I just got
@@ -131,7 +163,7 @@ may be helping, I feel that it was pretty nearly ideal.
 I also used an imperative solution today. I wonder if this could have
 contributed to the cleaner process in this (particular) case?
 
-**** Errors
+***** Errors
 Two small errors in counter increment logic.
 
 - I placed the updates adding the new counters and the reset counters in the
@@ -139,7 +171,7 @@ Two small errors in counter increment logic.
 - I had an off by one error, setting the expired counters to index 5 instead of
   6.
 
-**** To improve
+***** To improve
 - Write implementation plan in bullet points first.
 - *Keep the domain abstract*. This gives much more flexibility in improving the
   representation, which you'll likely want to do, since working the problem will
@@ -148,7 +180,7 @@ Two small errors in counter increment logic.
   representation and strategy a second thought.
 - Writing out algorithm in bullet points prior to coding may have helped
   avoid the two errors I encountered.
-** DONE Day 7
+*** DONE Day 7
 :LOGBOOK:
 CLOCK: [2021-12-07 Tue 22:00]--[2021-12-07 Tue 22:48] =>  0:48
 CLOCK: [2021-12-07 Tue 21:01]--[2021-12-07 Tue 21:32] =>  0:31
@@ -156,7 +188,7 @@ CLOCK: [2021-12-07 Tue 20:38]--[2021-12-07 Tue 20:39] =>  0:01
 CLOCK: [2021-12-07 Tue 19:45]--[2021-12-07 Tue 20:35] =>  0:50
 CLOCK: [2021-12-07 Tue 07:56]--[2021-12-07 Tue 08:17] =>  0:21
 :END:
-*** Specification
+**** Specification
 - input: horizontal positions of crab submarines
 - aim: get all horizontal positions to match while minimizing fuel expenditure
 - output: integer representing the least amount of fuel needed to make all
@@ -167,7 +199,7 @@ CLOCK: [2021-12-07 Tue 07:56]--[2021-12-07 Tue 08:17] =>  0:21
 - each crab has limited fuel
 - moving horizontal position by 1 unit costs 1 unit of fuel
 
-*** Implementation
+**** Implementation
 
 - Some preliminary research indicates that a truly elegant structure might be
   found by looking at [[https://en.wikipedia.org/wiki/Graph_bandwidth][graph bandwidth]] problems. But I think the overhead for me
@@ -198,7 +230,7 @@ Plan:
 - Stop search when next post is more costly than prev
 
 [[./bin/day7.ml][Solution]]
-*** Reflection
+**** Reflection
 
 I wasn't able to block out contiguous time to focus to today, so that made
 things a bit slower and more muddled.
@@ -210,13 +242,13 @@ it's relatively performant, but it's the code itself feels a bit ad hoc.
 
 Still, my process overall is working pretty well.
 
-**** Errors
+***** Errors
 - Confused the placement of arguments in initial search for min value
 - Forgot to handle zero case in my triangle number function
-**** To improve
+***** To improve
 ...
 
-** DONE Day 8
+*** DONE Day 8
 :LOGBOOK:
 CLOCK: [2021-12-08 Wed 20:56]--[2021-12-08 Wed 21:33] =>  0:37
 CLOCK: [2021-12-08 Wed 19:26]--[2021-12-08 Wed 20:21] =>  0:55
@@ -225,7 +257,7 @@ CLOCK: [2021-12-08 Wed 17:37]--[2021-12-08 Wed 17:54] =>  0:17
 CLOCK: [2021-12-08 Wed 08:11]--[2021-12-08 Wed 08:13] =>  0:02
 CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 :END:
-*** Specification
+**** Specification
 
 - Input: Lines of entries correlating signal patterns to output values
 
@@ -235,7 +267,7 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 - Each entry has a four digit output value
 - ...
 
-**** Part 1:
+***** Part 1:
 - Output: Count of the number of times 1, 4, 7, or 8 appear in output values
 
 - These 4 digits have a unique number of segments:
@@ -246,7 +278,7 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 - So we can identify them in the outputs simply by counting encoded digits that
   have the respective number of segments.
 
-**** Part 2:
+***** Part 2:
 
 - Output: The sum of all output values
 
@@ -255,10 +287,10 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 - Use the decoding algorithm to decode all outputs
 - Then return their sum
 
-*** Implementation
+**** Implementation
 [[./bin/day8.ml][Solution]]
 
-**** Part 1
+***** Part 1
 
 - Parse each line into representation that groups the signal patterns and the
   output values (for now, we can just work on a sequence of such representation,
@@ -266,7 +298,7 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 - Fold over the seq, counting the number of "digits" (strings) in the output
   values that have segments in the specified unique values.
 
-**** Part 2
+***** Part 2
 
 - Each digit is uniquely represented as a set of characters (which represent
   the signals)
@@ -290,7 +322,7 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
 - Construct the int based on the digits
 - Fold over of the decoded ints to sum them
 
-*** Reflection
+**** Reflection
 
 - Completed part 1 in ~30 mins with no errors. But it was very simple.
 - Part 2 took me an additional 2 hours. Some complication from unrelated
@@ -306,23 +338,23 @@ CLOCK: [2021-12-08 Wed 07:35]--[2021-12-08 Wed 08:11] =>  0:36
       can be hard. And, in any case, I am only trying to learn, to improve, and
       to have fun!
 
-**** Errors
+***** Errors
 No errors! I'm quite surprised, but my solutions to both parts worked correctly
 on the test input first try, and no errors were made when translating my
 specs and plans into implementation.
-**** To improve
+***** To improve
 I neglected to exercise today or yesterday (aside from a short walk). I suspect
 this is taking a toll. So, I must make time for this tomorrow.
 
-** DONE Day 9
+*** DONE Day 9
 :LOGBOOK:
 CLOCK: [2021-12-09 Thu 21:25]--[2021-12-09 Fri 22:20] =>  0:55
 CLOCK: [2021-12-09 Thu 10:05]--[2021-12-09 Thu 11:06] =>  1:01
 CLOCK: [2021-12-09 Thu 09:58]--[2021-12-09 Thu 09:59] =>  0:01
 CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 :END:
-*** Specification
-**** Part 1
+**** Specification
+***** Part 1
 - Input: a 2-d matrix of single digit numbers, representing heights of each position
 - Output: The sum of the *risk levels* of the *low points*
 
@@ -330,15 +362,15 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 - adjacent positions :: Positions in the matrix are only considered to have straight (not diagonal) adjacency, so max 4 adjacent points to each position.
 - risk level :: 1 plus the height
 
-**** Part 2
+***** Part 2
 - Input: a 2-d matrix of single digit numbers, representing heights of each position
 - Output: The sum of the sizes of the 3 largets *basins*
 
 - basin :: A contiguous area of adjacent positions < 9
-*** Implementation
+**** Implementation
 [[./bin/day9.ml][Solution]]
 
-**** Part 1
+***** Part 1
 - read input 2-d matrix of ints
 - identify low points
   - for each position in the matrix, measure whether it is < all adjacent
@@ -349,7 +381,7 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   - position + 1
 - sum calculated risk in accumulator constructed while scanning the matrix
 
-**** Part 2
+***** Part 2
 - represent map as 2-d matrix of ={x: int, y: int, height: int; marked: bool}=
 - beginning with the top left position, start a basin size counter
   - check whether the current position is < 9
@@ -362,8 +394,8 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
 - keep a sorted list of the bason sizes
 - after all basins are marked, return the sum of the 3 biggest sizes
 
-*** Reflection
-**** Errors
+**** Reflection
+***** Errors
 - First run of part 1 produced 0.
 
   This turned out to be due to the way that the implementation of `Seq.to_array`
@@ -382,7 +414,7 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   the dance of interweaving thunks between lazy/force required for such libs,
   but I almost ran out of time to complete the AOC challenges and still get
   enough sleep.
-**** To improve
+***** To improve
 - [x] Implement (lazy so memoized?) streaming from file?
   - Later... Before even completing part 2 I've ported everything to a properly lazy
     (i.e., memoized) stream based interface, which should protect me from these
@@ -392,13 +424,13 @@ CLOCK: [2021-12-09 Thu 07:10]--[2021-12-09 Thu 07:56] =>  0:46
   do very mercenary implementations without nice abstractions, look for existing
   libraries to use before starting to roll you own!
 - Use the graphs!
-** DONE Day 10
+*** DONE Day 10
 :LOGBOOK:
 CLOCK: [2021-12-10 Fri 20:22]--[2021-12-10 Fri 21:14] =>  0:52
 CLOCK: [2021-12-10 Fri 17:00]--[2021-12-10 Fri 17:31] =>  0:31
 CLOCK: [2021-12-10 Fri 07:12]--[2021-12-10 Fri 07:35] =>  0:23
 :END:
-*** Specification
+**** Specification
 
 - Input :: Lines of chunks, which may be *incomplete* or *corrupted*
 
@@ -432,18 +464,18 @@ CLOCK: [2021-12-10 Fri 07:12]--[2021-12-10 Fri 07:35] =>  0:23
     function ~f : total:int -> char -> int = total * 5 + (score char)~
 
 
-**** Part 1
+***** Part 1
 
 - Output :: Sum of syntax error scores for each corrupted line
 
-**** Part 2
+***** Part 2
 
 - Output :: median of the *autocomplete scores* for each incomplete line
 
-*** Implementation
+**** Implementation
 [[./bin/day10.ml][Solution]]
 
-**** Part 1
+***** Part 1
 
 This is a balanced parenthesis problem.
 
@@ -459,7 +491,7 @@ This is a balanced parenthesis problem.
   - if the result of folding over he line chars is =Some char=, record the
     syntax error score corresponding to the =char= in the =score=.
 
-**** Part 2
+***** Part 2
 
 - Discard all *corrupted lines*
 - For each remaining line
@@ -470,8 +502,8 @@ This is a balanced parenthesis problem.
 - Accumulate a sorted list of each completion score
 - Finally, return the median
 
-*** Reflection
-**** Errors
+**** Reflection
+***** Errors
 - I didn't take into account the non-commutativity of the completion scoring
   operation, and was processing the closing brackets in reverse order, leading
   to incorrect scores.
@@ -480,17 +512,17 @@ This is a balanced parenthesis problem.
   solution.
 - It was probably assured by the fact that I neglected to make note of this
   property in my restatement of the spec.
-**** To improve
+***** To improve
 - Note any key properties of the data/system while writing my own english spec.
 
-** DONE Day 11
+*** DONE Day 11
 :LOGBOOK:
 CLOCK: [2021-12-11 Sat 17:11]--[2021-12-11 Sat 17:51] =>  0:40
 CLOCK: [2021-12-11 Sat 14:33]--[2021-12-11 Sat 16:42] =>  2:09
 CLOCK: [2021-12-11 Sat 09:56]--[2021-12-11 Sat 10:39] =>  0:43
 CLOCK: [2021-12-11 Sat 08:58]--[2021-12-11 Sat 09:31] =>  0:33
 :END:
-*** Specification
+**** Specification
 - Input: An *OctoMap*
 
 - OctoMap :: A 2-d matrix of integers.
@@ -513,22 +545,22 @@ CLOCK: [2021-12-11 Sat 08:58]--[2021-12-11 Sat 09:31] =>  0:33
   - Octopodes at energy levels > 9 flash on a step before being reset.
   - When an octopus flashes, it increments the energy level of all adjacent octopodes
   - *But* an octopus can only flash at most once per step.
-**** Part 1
+***** Part 1
 - Output: The number of *octo-flashes* after 100 *steps*
-*** Implementation
+**** Implementation
 [[./bin/day11.ml][Solution]]
 
 This is a combination of Day 9, where we had to search a matrix and reason about
 adjacent positions, and Day 6, where we had to track counter states, so expect
 to borrow code, ideas from those.
-*** Reflection
-**** Errors
+**** Reflection
+***** Errors
 - Missed one cordinate in the helper function written to select adjacent
   positions from matrix. Probably killed an hour of debugging.
 - I've not been doing any unit testing. Shame on me. :/
 - Debugging takes a long time, because I have to write out my printers, and put
   in printfs, then remove them.
-**** To improve
+***** To improve
 - I don't like that the specs and plans are so far from the actual code.
   Starting from today, I will write the english language refinements as docs
   over the code itself. This is fitting, since the whole point of the =Domain=
@@ -538,7 +570,7 @@ to borrow code, ideas from those.
 - Write unit tests/prop tests for any general purpose functions written
 - Write pps for each data type
 - Start using logging
-** DONE Day 12
+*** DONE Day 12
 :LOGBOOK:
 CLOCK: [2021-12-12 Sun 15:15]--[2021-12-12 Sun 15:44] =>  0:29
 CLOCK: [2021-12-12 Sun 13:06]--[2021-12-12 Sun 14:36] =>  1:30
@@ -547,18 +579,18 @@ CLOCK: [2021-12-12 Sun 08:48]--[2021-12-12 Sun 09:31] =>  0:43
 :END:
 
 - [[./bin/day12.ml][Solution]]
-*** Reflection
+**** Reflection
 Writing the spec inline with the code worked well.
-**** Errors
+***** Errors
 - Misread the spec of the part 2. I read it to allow entering every small cave
   twice. In face, it allowed entering the one small cave twice. I probably would
   have caught this, except I skipped the set of writing out the part 2 spec.
 - Some simple implementation errors along the way, but just the usual.
   Having the logging lib set up helped debug much quicker.
-**** To improve
+***** To improve
 - Don't take short cuts on part 2! :)
 
-** STRT Day 13
+*** STRT Day 13
 :LOGBOOK:
 CLOCK: [2021-12-13 Mon 22:33]
 CLOCK: [2021-12-13 Mon 22:25]--[2021-12-13 Mon 22:32] =>  0:07
@@ -570,25 +602,7 @@ CLOCK: [2021-12-13 Mon 17:46]--[2021-12-13 Mon 17:59] =>  0:13
 CLOCK: [2021-12-13 Mon 07:35]--[2021-12-13 Mon 07:36] =>  0:01
 :END:
 - [[./bin/day13.ml][Solution]]
-*** Reflection
-**** Errors
-**** To improve
+**** Reflection
+***** Errors
+***** To improve
 
-* Template
-** Day <N>
-- [[./bin/day<N>.ml][Solution]]
-*** Reflection
-**** Errors
-**** To improve
-
-* Tasks
-** TODO Make a PR to add utility functions back into Zlist
- https://github.com/hakuch/zlist
-** TODO Rename solutions to have prefixed 0
-** TODO Ask containers whether they'd like a matrix library
-** STRT Automate skeleton setup
-:LOGBOOK:
-CLOCK: [2021-12-13 Mon 07:15]--[2021-12-13 Mon 07:34] =>  0:19
-:END:
-** DONE make a PR to fix behavior of =Containers.Seq.to_array=
-See: https://github.com/c-cube/ocaml-containers/pull/390
