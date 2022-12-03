@@ -29,26 +29,33 @@ include Solver (D)
 |}
 
 let test_skeleton day =
+  let aoc_year = Sys.getenv_opt "AOC_YEAR" |> Option.get_exn_or "Missing env var AOC_YEAR" in
   Printf.sprintf
-    {|https://adventofcode.com/2021/day/%d
+    {|https://adventofcode.com/%s/day/%d
 
   $ export AOC_DAY=%d
 
 Part 1:
 
-  $ aoc2021 < test
+  $ aoc%s part-1 < test
 
 
-  $ aoc2021 < input
+  $ aoc%s part-2 < input
+
+Part 1:
+
+  $ aoc%s < test
+
+
+  $ aoc%s < input
 |}
-    day day
+    aoc_year day day aoc_year aoc_year aoc_year aoc_year
 
 let () =
   let day =
-    Array.get_safe Sys.argv 1
-    |> Option.get_exn_or "Missing argument DAY"
-    |> Int.of_string
-    |> Option.get_exn_or "Invalid argument, exepected int"
+    1
+    |> Array.get_safe Sys.argv |> Option.get_exn_or "Missing argument DAY"
+    |> Int.of_string           |> Option.get_exn_or "Invalid argument, exepected int"
   in
   let ml_file_name = Printf.sprintf "./bin/day%d.ml" day in
   let test_dir_name = Printf.sprintf "./test/day%d.t" day in

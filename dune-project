@@ -1,6 +1,6 @@
-(lang dune 2.8)
+(lang dune 3.5)
 
-(name aoc2021)
+(name aoc)
 
 (generate_opam_files true)
 
@@ -9,18 +9,18 @@
 (source
  (github username/reponame))
 
-(authors "Author Name")
+(authors "Shon Feder")
 
-(maintainers "Maintainer Name")
+(maintainers "Shon Feder")
 
 (license LICENSE)
 
 (documentation https://url/to/documentation)
 
 (package
- (name aoc2021)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (name aoc)
+ (synopsis "AOC")
+ (description "AOC AOC AOC")
  (depends ocaml
           dune
           containers
@@ -28,6 +28,6 @@
           logs
           ppx_inline_test)
  (tags
-  (topics "to describe" your project)))
+  ("advent of code" "play")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
