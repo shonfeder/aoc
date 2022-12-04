@@ -53,7 +53,7 @@ Part 1:
 
   $ aoc%s 1 < input
 
-Part 1:
+Part 2:
 
   $ aoc%s 2 < test
 
