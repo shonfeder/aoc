@@ -1,10 +1,3 @@
-(**
-
-- Goal: TODO
-- Input: TODO
-- Output: TODO
-*)
-
 open! Containers
 open Lib
 
